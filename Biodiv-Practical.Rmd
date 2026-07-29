@@ -194,7 +194,7 @@ paracou6 %>%
   # A vector of characters is needed
   pull(spName) %>% 
   # Make it an abundances object
-  as_abundances() ->
+  as_abundances(names = "Paracou 6") ->
   p6_abd
 ```
 
