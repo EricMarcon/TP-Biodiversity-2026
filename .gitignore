@@ -1,0 +1,10 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.positai
+
+# Fichiers de travail
+*.html
+*.pdf
+*_files/

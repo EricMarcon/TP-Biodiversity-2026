@@ -1,0 +1,561 @@
+---
+title: "Measuring Biodiversity"
+output:
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+runtime: shiny_prerendered
+bibliography: REFERENCES.bib
+---
+
+```{r}
+#| label: DoNotModify
+#| include: false
+### Utilities for R. 
+# Installation of R packages if necessary
+install_packages <- function(packages) {
+  invisible(
+    sapply(
+      packages, 
+      FUN = function(package) {
+        if (!package %in% installed.packages()[, 1]) {
+          install.packages(
+            package, 
+            repos = "https://cran.rstudio.com/", 
+            quiet = TRUE
+          )
+        }
+      }
+    )
+  )
+}
+
+# Basic packages
+install_packages(
+  c(
+    # R tools
+    "knitr", "formatR", "learnr", "tidyverse", 
+    # Scientific packages
+    "divent", "ape", "cluster", "SPECIES", "fundiversity"
+  )
+)
+
+# Chunk font size hook: allows size='small' 
+# or any valid Latex font size in chunk options
+def.chunk.hook <- knitr::knit_hooks$get("chunk")
+knitr::knit_hooks$set(
+  chunk = function(x, options) {
+    x <- def.chunk.hook(x, options)
+    ifelse(
+      options$size == "normalsize", 
+      yes = x,
+      no = paste0("\n \\", options$size, "\n\n", x, "\n\n \\normalsize")
+    )
+  }
+)
+
+# Tidyverse default options
+library("tidyverse")
+# Set ggplotting to bw plot default, but with transparent background elements.  
+theme_set(theme_bw(base_size = 12))
+theme_update(
+  panel.background = element_rect(fill = "transparent", colour = NA),
+  plot.background = element_rect(fill = "transparent", colour = NA)
+)
+knitr::opts_chunk$set(dev.args = list(bg = "transparent"))
+# learnr functions
+library("learnr")
+```
+
+## Presentation
+
+This is the practical for the Biodiversity Measurement course.
+
+The [talk](https://1drv.ms/p/s!Amvhelr37CHjmolPddkD-D6YS7GGbw?e=cl8bLb)is online.
+
+## Data
+
+```{r}
+#| label: setup
+#| include: false
+# Data available for all exercises
+
+# Paracou6 : Paracou database. 
+library("tidyverse")
+paracou6 <- read_csv2("data/paracou6.csv")
+
+library("divent")
+# p6_abd: abundances object
+p6_abd <- as_abundances(paracou6$spName, names = "Paracou 6")
+
+# p6_phylo: phylogény built from the taxonomy
+library("ape")
+paracou6 %>%
+  select(Family, Genus, spName) %>% 
+  # Requires factors
+  mutate_if(is.character, as.factor)  %>% 
+  # Create the phylogeny
+  {as.phylo(~Family/Genus/spName, data = ., collapse = FALSE)} %>% 
+  # Branch lengths are identical
+  compute.brlen(method = 1) %>% 
+  # Turn multichotomies to dichotomies
+  multi2di() %>%  
+  # Merge branches without divergence 
+  collapse.singles ->
+  p6_phylo
+
+# Z: Similarity matrix
+traits <- read_csv2("data/traits.csv")
+library("cluster")
+# Row names are needed, ignore deprecation warning
+rownames(traits) <- traits$spName
+traits %>% 
+  # Keep P6 species only
+  filter(spName %in% paracou6$spName) %>% 
+  # Keep trait values only
+  select(-(Family:spName)) %>% 
+  # Compute distance between rows
+  daisy(metric = "gower") %>% 
+  as.matrix() ->
+  dist_species
+# Dissimilarities
+Z <- 1 - dist_species/max(dist_species)
+
+# dfAbdP6SubPlots: abundances per subplot
+paracou6 %>% 
+  # Grouping
+  group_by(SubPlot, spName) %>% 
+  # Number of trees per species and subbplot
+  summarize(abundance = n())  %>%  
+  # A column per subplot
+  pivot_wider(
+    names_from = spName, 
+    values_from = abundance, 
+    values_fill  = 0
+  ) %>% 
+  # Rename the site column
+  rename(site = SubPlot) %>% 
+  # Name the subplots
+  mutate(site = paste("Subplot", site)) %>% 
+  as_abundances() ->
+  p6_sub_abd
+```
+
+### Reading Paracou database
+
+2016 inventory.
+
+```{r}
+#| label: Paracou6.csv
+library("tidyverse")
+paracou6 <- read_csv2("data/Paracou6.csv")
+# Show the data
+paracou6
+```
+
+### Map
+
+The map of P6 wapas is made with **ggplot2**.
+
+```{r}
+#| label: P6_map
+#| exercise: true
+paracou6 %>%
+  # Filter the wapa trees
+  filter(Genus == "Eperua") %>%
+  # Make a plot
+  ggplot() + 
+  # Points represent the trees
+  geom_point(
+    aes(x = Xfield, y = Yfield, size = CircCorr, color = Species)
+  ) + 
+  # Fixed coordinates for a map
+  coord_fixed() + 
+  # Color selection
+  scale_color_brewer(palette = "Set1") +
+  # Polish the text
+  labs(
+    x = "X", 
+    y = "Y", 
+    caption = "Paracou, plot 6", 
+    size = "Circumference", 
+    color = "Species"
+  )
+```
+
+### Rank Abundance Curve
+
+Make an object of class `abundances`.
+
+```{r}
+#| label: AbdP6
+library("divent")
+paracou6 %>%
+  # A vector of characters is needed
+  pull(spName) %>% 
+  # Make it an abundances object
+  as_abundances() ->
+  p6_abd
+```
+
+Produce a Whittaker plot with ggplot, fitting a lognormal distribution.
+
+```{r}
+#| label: Whittaker
+#| exercise: true
+#| hint: true
+p6_abd
+```
+
+```{r Whittaker-hint}
+?species_distribution
+```
+
+## Species-Neutral Diversity
+
+### Richness
+
+Count the number of species from the abundance vector: remember to eliminate the zeros if there are any.
+
+```{r}
+#| label: Richness1
+#| exercise: true
+#| hint: true
+p6_abd %>% 
+  as.numeric() ->
+  p6_abd_vector
+
+```
+
+```{r}
+#| label: Richness1-hint
+sum(p6_abd_vector > 0)
+```
+
+How many singletons and doubletons are there in the community?
+
+```{r}
+#| label: Singletons
+#| exercise: true
+#| hint: true
+
+```
+
+```{r}
+#| label: Singletons-hint
+sum(p6_abd_vector == 1)
+```
+
+Use the function `div_richness()` in *divent*.
+
+```{r}
+#| label: Richness2
+#| exercise: true
+# Works with both p6_abd and p6_abd_vector
+p6_abd %>% 
+  div_richness(estimator = "naive")
+```
+
+Estimate richness with the Chao and Jackknife estimators.
+
+```{r}
+#| label: Richness3
+#| exercise: true
+#| hint: true
+
+```
+
+```{r}
+#| label: Richness3-hint
+?div_richness
+```
+
+The internal algorithm for selecting the order of the Jackknife is that of @Burnham1978: the second-order Jackknife is chosen if the null hypothesis of equality of the first- and second-order estimators is rejected at the default risk threshold of 5% (which can be modified by the `jack_alpha` argument), which is the case here.
+A higher order costs the estimator more variance: it is only justified if the estimated value is significantly different, which means that we can hope to reduce the bias (underestimation) due to an order that is too low.
+The criteria of @Brose2003 suggest that the first-order Jackknife should be chosen because the proportion of singletons is less than one-third.
+The two approaches almost always agree: this is one of the rare cases where the choice is ambiguous.
+
+To force order 1, the argument `jack_max = 1` can be used.
+
+Obtain the 95% confidence interval of the Jackknife 2 estimator with the package **SPECIES**.
+The data must be abundance frequencies, i.e. the number of species represented by each number of individuals.
+
+```{r}
+#| label: SPECIES
+#| exercise: true
+library("SPECIES")
+p6_abd_vector %>% 
+  # Format for SPECIES
+  abd_freq_count() %>% 
+  as.matrix() %>% 
+  # Estimate the jackknife and extract $CI from the list of results
+  jackknife(k = 2) %>% 
+  # Extract an item of the list (note the quotes)
+  pluck("CI")
+```
+
+"lb" and "ub" are the upper and lower bounds.
+
+```{r}
+#| label: Richness-quiz
+#| echo: false
+quiz(
+  question("What is the best estimator of the richness of plot 6?",
+    answer("Chao"),
+    answer("Jackknife 1"),
+    answer("Jackknife 2"),
+    answer("Jackknife 1 or 2, the choice is not clear",  correct = TRUE),
+    answer("Jackknife 3"),
+    allow_retry = TRUE,
+    incorrect = "See [the  course](https://ericmarcon.github.io/MesuresBioDiv2/chap-MesuresNeutres.html#techniques-destimation-non-param%C3%A9trique) and try again.\nJackknife 1 is preferable according to Brose et al. (2003) but the calculation algorithm chooses Jackknife 2."
+  ),
+  question("Is the estimate robust?",
+    answer("yes"),
+    answer("no, if jackknife 2 is used", correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = "See [the course](https://ericmarcon.github.io/MesuresBioDiv2/chap-MesuresNeutres.html#techniques-destimation-non-param%C3%A9trique) and try again."
+  ),
+  question("Why?",
+    answer("The choice of the Jackknife order is unclear", correct = TRUE),
+    answer("Richness is severely underestimated"),
+    answer("The variance of the estimator increases with the order of the Jackknife", correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = "See [the course](https://ericmarcon.github.io/MesuresBioDiv2/chap-MesuresNeutres.html#techniques-destimation-non-param%C3%A9trique) and try again."
+  )
+)
+```
+
+### Diversity
+
+Estimate the asymptotic entropy and Shannon's diversity of plot 6 using the best estimator.
+Use the `as_numeric` argument to obtain a number rather than a tibble.
+
+```{r}
+#| label: Shannon1
+#| exercise: true
+p6_abd %>% ent_shannon()
+p6_abd %>% div_hill(q = 1)
+```
+
+Compare the diversity estimate with those of the ChaoJost estimator and the naive estimator.
+
+```{r}
+#| label: Shannon2
+#| exercise: true
+#| hint: true
+p6_abd %>% div_hill(q = 1, estimator = "ChaoJost")
+p6_abd %>% div_hill(q = 1, estimator = "naive")
+```
+
+The estimation bias decreases with the order of the diversity.
+It is very low for Simpson's diversity: check this.
+
+```{r}
+#| label: Diversityq2
+#| exercise: true
+#| hint: true
+p6_abd %>% div_hill(q = 2)
+# Complete the code
+
+```
+
+The function `div_hill()` chooses the best default estimator, presently "UnveilJ".
+The order of the Jackknife applied to the richness estimate can be forced with argument `jack_max`.
+
+### Diversity profile
+
+Plot the diversity profile of plot 6 using the best estimator.
+
+```{r}
+#| label: Profile1
+#| exercise: true
+p6_abd %>% 
+  profile_hill() %>% 
+  autoplot() +
+  # Don't print the legend
+  theme(legend.position = "none")
+```
+
+Compare with the naive profile.
+
+```{r}
+#| label: Profile2
+#| exercise: true
+p6_abd %>% 
+  profile_hill(estimator = "naive") ->
+  p6_profile_naive
+p6_abd %>% 
+  profile_hill() ->
+  p6_profile_best
+# Bind the profiles in a single tibble
+p6_profile_naive %>% 
+  bind_rows(p6_profile_best) %>% 
+  # Plot it
+  ggplot() +
+  geom_line(
+    aes(
+      x = order,
+      y = diversity,
+      color = estimator
+    )
+  )
+```
+
+### Rarefaction and extrapolation
+
+Diversity can be estimated at an arbitrary level of sampling effort or coverage rate.
+
+Estimate the diversity observed with one hectare of inventory (the plot measures 6.25 ha).
+
+```{r}
+#| label: Leveln
+#| exercise: true
+p6_abd %>% 
+  div_hill(q = 1, level = round(abd_sum(., as_numeric = TRUE) / 6.25))
+# Estimate richness rather than Shannon
+
+```
+
+Estimate the sample coverage.
+
+```{r Coverage}
+#| label: Coverage
+#| exercise: true
+p6_abd %>% 
+  coverage()
+```
+
+Estimate the diversity for a 99% sample coverage and compare it with the asymptotic diversity (sample coverage equal to 100%).
+Estimate the richness to evaluate the number of species corresponding to the last percentage of coverage.
+
+```{r}
+#| label: LevelC
+#| exercise: true
+p6_abd %>% 
+  div_hill(q = 1, level = .99)
+p6_abd %>% 
+  div_hill(q = 1)
+# Estimate richness rather than Shannon
+
+```
+
+Plot the richness accumulation curve up to twice the size of the inventory.
+
+```{r}
+#| label: DivAC
+#| exercise: true
+#| exercise.timelimit: 120
+p6_abd %>% 
+  accum_hill(
+    q = 1, 
+    levels = seq(
+      from = 1, 
+      to = 2 * abd_sum(., as_numeric = TRUE), 
+      by = 100
+    )
+  ) %>% 
+  autoplot()
+# Try q = 1 and q = 2, by = 500 to fasten computation
+```
+
+```{r}
+#| label: Diversity-quiz
+#| echo: false
+quiz(
+  question("Estimation bias decreases with the order of diversity",
+    answer("True",  correct = TRUE),
+    answer("False"),
+    incorrect = "See [the course](https://ericmarcon.github.io/MesuresBioDiv2/entropie.html#estimation-de-lentropie)."
+  ),
+  question("Why?",
+    answer("The impact of rare species on diversity increases with q"),
+    answer("The impact of rare species on diversity decreases with q", correct = TRUE),
+    incorrect = "See [the course](https://ericmarcon.github.io/MesuresBioDiv2/entropie.html#estimation-de-lentropie)."
+  ),
+  question("What is the estimation technique for the UnveilJ estimator?",
+    answer("Probabilities are estimated using an elaborate model",  correct = TRUE),
+    answer("Probabilities are estimated by multiplying frequencies by the coverage rate"),
+    answer("The number of unobserved species is estimated by the Jackknife", correct = TRUE),
+    answer("Their distribution is geometric but of little importance", correct = TRUE),
+    allow_retry = TRUE,
+    incorrect = "See [the course](https://ericmarcon.github.io/MesuresBioDiv2/entropie.html#estimation-de-lentropie)."
+  )
+)
+```
+
+## Phylogenetic Diversity
+
+### Creation of a phylogeny
+
+A phylogeny can be created from the taxonomy.
+
+```{r}
+#| label: p6Phylo
+#| exercise: true
+#| message: false
+library("ape")
+paracou6 %>%
+  # Keep a single line per species
+  group_by(Family, Genus, spName) %>% 
+  # Count individuals (useless, but group_by needs summarise)
+  summarise(abundance = n()) %>% 
+  # Get rid of the groups
+  ungroup() %>% 
+  # Requires factors
+  mutate_if(is.character, as.factor)  %>% 
+  # Create the phylogeny
+  {as.phylo(~Family/Genus/spName, data = ., collapse = FALSE)} %>% 
+  # Branch lengths are identical
+  compute.brlen(method = 1) %>% 
+  # Turn multichotomies to dichotomies
+  multi2di() %>%  
+  # Merge branches without divergence 
+  collapse.singles() ->
+  p6_phylo
+```
+
+Plot the phylogeny.
+
+```{r}
+#| label: Phylogeny
+#| exercise: true
+#| hint: true
+#| exercise.timelimit: 120
+
+```
+
+```{r phylogenie-hint}
+#| label: Phylogeny-hint
+p6_phylo %>% 
+  plot(type = "fan", show.tip.label = FALSE) 
+```
+
+### Phylogenetic Diversity Profile
+
+Estimate the Shannon phylogenetic diversity of plot 6 with the best estimator.
+
+```{r , exercise=TRUE, exercise.timelimit=120}
+#| label: phyShannon
+#| exercise: true
+#| exercise.timelimit: 120
+p6_abd %>% 
+  div_phylo(q = 1, tree = p6_phylo)
+# Complete the code
+```
+
+Plot the phylogenetic diversity profile.
+
+```{r}
+#| label: phyProfil
+#| exercise: true
+#| exercise.timelimit: 120
+p6_abd %>% 
+  profile_phylo(tree = p6_phylo) %>% 
+  autoplot()
+# Choose the estimator
+
+```
+
+Compare PD and richness.
+
+## References
