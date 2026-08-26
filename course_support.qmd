@@ -198,7 +198,7 @@ BCI %>%
   # Make an abundances object
   as_abundances() %>% 
   # Make all plot weights equals
-  mutate(weight = 1/50) %>% 
+  mutate(weight = 1) %>% 
   # Gather all 50 plots
   metacommunity() %>% 
   # Name it
