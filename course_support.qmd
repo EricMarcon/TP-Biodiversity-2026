@@ -228,12 +228,81 @@ BCI_all %>%
 
 ```{r}
 tibble(
-  sp_1 = c(10, 10),
-  sp_2 = c(10, 10),
-  sp_3 = c(10, 5)
+  sp_1 = c(10, 10, 10, 10),
+  sp_2 = c(10, 11, 1, 0)
 ) %>% 
   as_abundances() %>% 
   print() ->
   comm_dummy
 ```
 
+Richness:
+```{r}
+div_richness(comm_dummy)
+```
+
+### Paracou 6
+
+Prepare the data: gather the four subplots.
+
+```{r}
+paracou_6_abd %>% 
+  metacommunity() ->
+  comm_p6
+autoplot(comm_p6)
+```
+
+Abundance frequences.
+
+```{r}
+comm_p6 %>% 
+  as.numeric() %>% 
+  abd_freq_count()
+```
+
+Estimators.
+
+```{r}
+div_richness(comm_p6, estimator = "naive") %>% 
+  bind_rows(div_richness(comm_p6, estimator = "Chao1")) %>% 
+  bind_rows(div_richness(comm_p6, estimator = "iChao")) %>% 
+  # Default estimator
+  bind_rows(div_richness(comm_p6, estimator = "jackknife")) %>% 
+  bind_rows(div_richness(comm_p6, estimator = "jackknife", jack_max = 1)) %>% 
+  bind_rows(div_richness(comm_p6, estimator = "rarefy" ))
+```
+
+## Shannon
+
+### Information function
+
+```{r}
+ggplot() +
+  geom_function(fun = \(p) {log(1 / p)})
+```
+
+Species information.
+
+Information function.
+
+```{r}
+ggplot() +
+  geom_function(fun = \(p) {p * log(1 / p)})
+```
+
+### Paracou 6
+
+Estimators.
+
+```{r}
+ent_shannon(comm_p6, estimator = "naive") %>% 
+  bind_rows(ent_shannon(comm_p6, estimator = "UnveilJ")) %>% 
+  bind_rows(ent_shannon(comm_p6, estimator = "ChaoJost"))
+```
+Hill numbers.
+
+```{r}
+div_hill(comm_p6, q = 1, estimator = "naive") %>% 
+  bind_rows(div_hill(comm_p6, q = 1, estimator = "UnveilJ")) %>% 
+  bind_rows(div_hill(comm_p6, q = 1, estimator = "ChaoJost"))
+```
