@@ -1,0 +1,239 @@
+---
+title: "Biodiversity Measurement course support"
+format: html
+editor: visual
+---
+
+```{r}
+#| label: DoNotModify
+#| include: false
+### Utilities for R.
+
+# Necessary packages
+packages_required <- c(
+  # R tools
+  "knitr", "tidyverse", 
+  # Scientific packages
+  "divent", "vegan"
+)
+# Already installed?
+packages_installed <- vapply(
+  packages_required, 
+  FUN = requireNamespace, 
+  FUN.VALUE = TRUE, 
+  quietly = TRUE
+) 
+# Install missing packages
+install.packages(names(packages_installed)[!packages_installed])
+
+# Chunk font size hook: allows size='small' 
+# or any valid Latex font size in chunk options
+def.chunk.hook <- knitr::knit_hooks$get("chunk")
+knitr::knit_hooks$set(
+  chunk = function(x, options) {
+    x <- def.chunk.hook(x, options)
+    ifelse(
+      options$size == "normalsize", 
+      yes = x,
+      no = paste0("\n \\", options$size, "\n\n", x, "\n\n \\normalsize")
+    )
+  }
+)
+
+# Tidyverse default options
+library("tidyverse")
+# Set ggplotting to bw plot default, but with transparent background elements.  
+theme_set(theme_bw(base_size = 12))
+theme_update(
+  panel.background = element_rect(fill = "transparent", colour = NA),
+  plot.background = element_rect(fill = "transparent", colour = NA)
+)
+knitr::opts_chunk$set(dev.args = list(bg = "transparent"))
+```
+
+## Motivation
+
+This document contains code chunks to help you understanding the course.
+Don't hesitate to modify them, add your own notes and code.
+
+It comes with a practical you will run at home (Biodiv-Practical.Rmd).
+
+## Species distributions
+
+### Broken stick
+
+Random distributions are created by `divent::rxxx()`functions.
+
+```{r}
+library("tidyverse")
+library("divent")
+rcommunity(
+  # One community
+  1,
+  # Number of trees
+  size = 10000,
+  # Number of species
+  species_number = 300,
+  # Distribution
+  distribution = "bstick"
+) %>% 
+  # Whittaker plot
+  autoplot()
+```
+### Geometric
+
+Random distribution.
+
+```{r}
+rcommunity(
+  # One community
+  1,
+  # Number of trees
+  size = 10000,
+  # Number of species
+  species_number = 300,
+  # Distribution
+  distribution = "geom",
+  prob_geom = 0.1
+) %>% 
+  # Whittaker plot
+  autoplot()
+```
+
+### Lognormal
+
+Random distribution.
+
+```{r}
+rcommunity(
+  # One community
+  1,
+  # Number of trees
+  size = 10000,
+  # Number of species
+  species_number = 300,
+  # Distribution
+  distribution = "lnorm",
+  sd_lnorm = 1
+) %>% 
+  # Whittaker plot
+  autoplot()
+```
+
+Modify the standard deviation.
+
+### Log-series
+
+Random distribution.
+
+```{r}
+rcommunity(
+  # One community
+  1,
+  # Number of trees
+  size = 10000,
+  # Number of species is calculated
+  # Distribution
+  distribution = "lseries",
+  fisher_alpha = 40
+) %>% 
+  # Whittaker plot
+  autoplot()
+```
+
+### Estimate the parameters
+
+Draw a very large lognormal distribution.
+
+```{r}
+rcommunity(
+  # One community
+  1,
+  # Number of trees = max supported integer value
+  size = .Machine$integer.max,
+  # Number of species
+  species_number = 300,
+  # Distribution
+  distribution = "lnorm",
+  sd_lnorm = 1
+) %>% 
+  # Name it
+  mutate(site = "Large log-normal") ->
+  comm_large_lnorm
+```
+
+Sample it.
+
+```{r}
+# Draw 3000 trees from the large community
+rcommunity(
+  1,
+  size = 3000,
+  abd = as.numeric(comm_large_lnorm)
+) %>% 
+  # Name it
+  mutate(site = "Small log-normal") ->
+  comm_small_lnorm
+# Make a single tibble with all data
+comm_large_lnorm %>% 
+  # Make a single tibble
+  bind_rows(comm_small_lnorm) ->
+  comm_lnorm
+# Plot the distributions and fit a lognormal model
+autoplot(comm_lnorm, fit_rac = TRUE, distribution = "lnorm")
+# Estimate the parameters
+fit_rac(comm_lnorm, distribution = "lnorm") 
+```
+
+## Species Accumulation Curves
+
+### BCI data
+
+Gather all subplots.
+
+```{r}
+library("vegan")
+data(BCI)
+BCI %>% 
+  # Make an abundances object
+  as_abundances() %>% 
+  # Make all plot weights equals
+  mutate(weight = 1/50) %>% 
+  # Gather all 50 plots
+  metacommunity() %>% 
+  # Name it
+  mutate(site = "BCI") -> 
+  BCI_all
+autoplot(BCI_all, fit_rac = TRUE, distribution = "lnorm")
+fit_rac(BCI_all, distribution = "lnorm") 
+```
+
+### Accumulation curve
+
+```{r}
+# Number of trees in BCI
+BCI_n <- abd_sum(BCI_all, as_numeric = TRUE)
+# Asymptotic richness
+BCI_richness <- div_richness(BCI_all, as_numeric = TRUE)
+BCI_all %>% 
+  accum_hill(levels = seq(from = 1, to = 2 * BCI_n, by = 10)) %>% 
+  autoplot() +
+  geom_vline(xintercept = BCI_n, linetype = 2) +
+  geom_hline(yintercept = BCI_richness, linetype = 2)
+```
+
+## Richness
+
+### Dummy communities
+
+```{r}
+tibble(
+  sp_1 = c(10, 10),
+  sp_2 = c(10, 10),
+  sp_3 = c(10, 5)
+) %>% 
+  as_abundances() %>% 
+  print() ->
+  comm_dummy
+```
+
