@@ -11,34 +11,24 @@ bibliography: REFERENCES.bib
 ```{r}
 #| label: DoNotModify
 #| include: false
-### Utilities for R. 
-# Installation of R packages if necessary
-install_packages <- function(packages) {
-  invisible(
-    sapply(
-      packages, 
-      FUN = function(package) {
-        if (!package %in% installed.packages()[, 1]) {
-          install.packages(
-            package, 
-            repos = "https://cran.rstudio.com/", 
-            quiet = TRUE
-          )
-        }
-      }
-    )
-  )
-}
+### Utilities for R.
 
-# Basic packages
-install_packages(
-  c(
-    # R tools
-    "knitr", "formatR", "learnr", "tidyverse", 
-    # Scientific packages
-    "divent", "SPECIES", "ape", "cluster", "mice", "fundiversity"
-  )
+# Necessary packages
+packages_required <- c(
+  # R tools
+  "knitr", "learnr", "tidyverse", 
+  # Scientific packages
+  "ape", "divent", "cluster", "fundiversity", "SPECIES"
 )
+# Already installed?
+packages_installed <- vapply(
+  packages_required, 
+  FUN = requireNamespace, 
+  FUN.VALUE = TRUE, 
+  quietly = TRUE
+) 
+# Install missing packages
+install.packages(names(packages_installed)[!packages_installed])
 
 # Chunk font size hook: allows size='small' 
 # or any valid Latex font size in chunk options
@@ -88,7 +78,7 @@ library("divent")
 # p6_abd: abundances object
 p6_abd <- as_abundances(paracou6$spName, names = "Paracou 6")
 
-# p6_phylo: phylogény built from the taxonomy
+# p6_phylo: phylogeny built from the taxonomy
 library("ape")
 paracou6 %>%
   select(Family, Genus, spName) %>% 
@@ -857,7 +847,7 @@ The diversity of all communities can be computed altogether.
 div_richness(p6_sub_abd)
 ```
 
-The `metacommunity()` function agregates the communities.
+The `metacommunity()` function aggregates the communities.
 Abundances are summed according to the weights.
 
 ```{r}
