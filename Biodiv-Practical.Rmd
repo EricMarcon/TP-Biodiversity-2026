@@ -36,7 +36,7 @@ install_packages(
     # R tools
     "knitr", "formatR", "learnr", "tidyverse", 
     # Scientific packages
-    "divent", "ape", "cluster", "SPECIES", "fundiversity"
+    "divent", "SPECIES", "ape", "cluster", "mice", "fundiversity"
   )
 )
 
@@ -204,11 +204,23 @@ Produce a Whittaker plot with ggplot, fitting a lognormal distribution.
 #| label: Whittaker
 #| exercise: true
 #| hint: true
-p6_abd
+
 ```
 
 ```{r Whittaker-hint}
 ?species_distribution
+```
+
+We will need the number of individuals and the list of species.
+
+```{r}
+#| label: P6_data
+# Sum of abundances
+p6_abd %>% 
+  abd_sum(as_numeric = TRUE) ->
+  p6_abd_sum
+# Species names are the column names, except for the fist two
+p6_species <- colnames(p6_abd)[-(1:2)]
 ```
 
 ## Species-Neutral Diversity
@@ -411,7 +423,7 @@ Estimate the diversity observed with one hectare of inventory (the plot measures
 #| label: Leveln
 #| exercise: true
 p6_abd %>% 
-  div_hill(q = 1, level = round(abd_sum(., as_numeric = TRUE) / 6.25))
+  div_hill(q = 1, level = round(p6_abd_sum / 6.25))
 # Estimate richness rather than Shannon
 
 ```
@@ -450,7 +462,7 @@ p6_abd %>%
     q = 1, 
     levels = seq(
       from = 1, 
-      to = 2 * abd_sum(., as_numeric = TRUE), 
+      to = 2 * p6_abd_sum, 
       by = 100
     )
   ) %>% 
@@ -495,12 +507,10 @@ A phylogeny can be created from the taxonomy.
 #| message: false
 library("ape")
 paracou6 %>%
+  # Keep the botanical data
+  select(Family, Genus, spName) %>% 
   # Keep a single line per species
-  group_by(Family, Genus, spName) %>% 
-  # Count individuals (useless, but group_by needs summarise)
-  summarise(abundance = n()) %>% 
-  # Get rid of the groups
-  ungroup() %>% 
+  distinct() %>% 
   # Requires factors
   mutate_if(is.character, as.factor)  %>% 
   # Create the phylogeny
@@ -557,5 +567,336 @@ p6_abd %>%
 ```
 
 Compare PD and richness.
+
+## Functional Diversity
+
+### Functional distance matrix
+
+The values for individual traits come from the Bridge project and are supplemented by average values per species from the literature compiled in the Mariwenn database.
+
+The individual traits are wood density and the logarithm of specific leaf area (SLA):
+
+```{r}
+#| label: TraitsInd
+#| message: false
+# Individual traits
+read_csv2("data/ind_traits.csv") %>% 
+    # Create the species names
+    unite(col = spName, Genus, Species, remove = FALSE) %>% 
+    # Group by species
+    group_by(Family, Genus, spName) %>% 
+    # Calculate the medians of the traits
+    summarize(
+      WSG = median(sapwood_dens), 
+      logSLA = median(log_SLA)
+    ) ->
+    traits_wsg_sla
+```
+
+The species traits are maximum height (95^th^ percentile) and seed mass:
+
+```{r}
+#| label: TraitsSp
+#| message: false
+# Species traits
+read_csv2(file = "data/life_traits.csv") %>% 
+    # Select the traits
+    select(Name, Hauteur, Masse) %>% 
+    # Rename Height
+    rename(height = Hauteur) %>% 
+    # Prepare merging by renaming the column
+    rename(spName = Name) %>% 
+    # Seed mass is an ordered factor
+    mutate(seed = ordered(Masse)) %>% 
+    # Delete the original column
+    select(-Masse) ->
+    traits_seed_height
+```
+
+The operation is completed by joining the tables using identical values in the `spName` column, which is common to both tibbles:
+
+```{r}
+#| label: Traits
+#| message: false
+traits_wsg_sla %>% 
+  left_join(traits_seed_height) ->
+  traits_data
+```
+
+The list of traits does not necessarily contain all the species on plot 6 (but it does contain hundreds of others, which are not needed here).
+Missing species must be added:
+
+```{r}
+#| label: MissingSpecies
+missing_sp <- setdiff(p6_species, traits_data$spName)
+# Prepare additional lines
+paracou6 %>% 
+  # Select the columns
+  select(Family, Genus, spName) %>% 
+  # Missing species
+  filter(spName %in% missing_sp) %>% 
+  # Delete duplicates
+  distinct() ->
+  missing_rows
+traits_data %>% 
+  # Add missing rows
+  bind_rows(missing_rows) %>% 
+  # Factors a
+  mutate_if(is.character, as.factor) ->
+  traits_p6_sp
+```
+
+The trait table contains missing values.
+The proportion of missing trait data, weighted by the number of individuals, is calculated.
+We need a table with species in rows and their abundances and the ratio of missing traits in columns.
+
+```{r}
+#| label: MissingTraits
+# Number of missing traits for each species
+apply(traits_p6_sp, 1, function(x) sum(is.na(x))) %>%
+  # Divide by the number of lines to obtain a proportion
+  `/`(4) %>%
+  # Create a single-column tibble
+  as_tibble_col(column_name = "missing_traits") %>%
+  # Add it to the trait tibble
+  bind_cols(traits_p6_sp) %>%
+  # Right-join a tibble with abundances
+  right_join(
+    paracou6 %>% 
+      group_by(spName) %>% 
+      summarise(abundance = n())
+  ) %>% 
+  # Unmatched species have missing_traits NA, should be 1
+  mutate(
+    missing_traits = ifelse(is.na(missing_traits), 1, missing_traits)
+  ) -> 
+  traits_p6_missing
+
+# Weighted proportion of missing traits
+with(traits_p6_missing,
+  sum(missing_traits * abundance) / sum(abundance)
+)
+```
+
+### Filling in missing values
+
+Missing traits are filled in using the MICE procedure, which takes into account all the available information.
+The most complete table of traits possible (not limited to the species on plot 6) is used:
+
+```{r}
+#| label: mice
+# Fill in missing values (long calculation)
+library("mice")
+if (file.exists("data/traits.csv")) {
+  # Read the previously-saved result
+  read_csv2("data/traits.csv") ->
+    traits
+} else {
+  traits_p6_sp %>% 
+    mice(print = FALSE) %>% 
+    complete() ->
+    traits
+  # Backup 
+  traits %>% 
+    write_csv2("data/traits.csv")
+}
+```
+
+The calculation takes several minutes and is therefore not performed each time the tutorial is run.
+The result is read from the backup file if it exists.
+
+### Distance matrix
+
+The Gower distance (course: section 6.3) is calculated between species.
+
+```{r}
+#| label: Gower
+#| message: false
+library("cluster")
+# Name the rows for daisy()
+rownames(traits) <- traits$spName
+traits %>% 
+  # Keep p6 species only
+  filter(spName %in% p6_species) %>% 
+  # Keep trait values only
+  select(-(Family:spName)) %>% 
+  # Compute distance between rows
+  daisy(metric = "gower", type = list(ordered = 4)) %>% 
+  # The square root is euclidean (Gower, 1966)
+  sqrt() %>% 
+  # Standardize to 1
+  `/`(max(.)) ->
+  dist_fun
+
+# Distribution of distances
+dist_fun %>% 
+  as.numeric() %>% 
+  tibble(Distance = .) %>% 
+  ggplot() +
+  geom_density(aes(x = Distance))
+```
+
+The dissimilarity $\mathbf{Z}$ is calculated as the complement to the normalised maximum distance:
+
+```{r}
+#| label: Dissimilarites
+Z <- 1 - as.matrix(dist_fun)
+rownames(Z) <- colnames(Z) <- p6_species
+```
+
+### Functional diversity profile
+
+Plot the diversity profile of Leinster and Cobbold.
+
+```{r}
+#| label: Dqz
+#| exercise: true
+#| exercise.timelimit: 120
+# Diversity Profile
+p6_abd %>% 
+  profile_similarity(similarities = Z) %>% 
+  autoplot()
+```
+
+```{r}
+#| label: phylo-quiz
+#| echo: false
+quiz(
+  question("What are the constraints of the phylogenetic tree in defining diversity?",
+           answer("It must be ultra-metric", correct = TRUE),
+           answer("Its height must be 1"),
+           answer("It must not have polytomies", correct = TRUE),
+           allow_retry = TRUE
+  ),
+  question("The tree can represent any distance, not necessarily a phylogeny.",
+           answer("True", correct = TRUE),
+           answer("False")
+  ),
+  question("Phylogenetic diversity is the average along the tree of the diversity at each period.",
+           answer("True"),
+           answer("False: this is true for entropy, but the transformation into diversity is not linear.", correct = TRUE),
+           answer("False: this isn't true for entropy either.")
+  )
+)
+```
+
+### Alternative approach
+
+The *FD* package and more recently the *fundiversity* package can be used to calculate the functional diversity indices of Villéger et al. (2008): richness (FRic), equitability (FEve) and divergence (FDiv).
+
+The data are prepared here for *fundiversity*: the inventory of the 4 subplots of plot 6 is placed in a dataframe, the first column of which contains the names of the sites and the others the numbers of individuals per species.
+The traits are in a matrix where the row names are the species names and the columns contain the trait values.
+
+```{r}
+#| label: FD
+#| exercise: true
+# Subplot inventory
+paracou6 %>% 
+  group_by(SubPlot, spName) %>% 
+  summarize(abundance = n()) %>% 
+  pivot_wider(
+    names_from = spName, 
+    values_from = abundance, 
+    values_fill = 0
+  ) ->
+  p6_sub_abd
+
+# Traits
+traits %>% 
+  select(WSG:seed) %>% 
+  as.matrix() ->
+  traits.matrix
+rownames(traits.matrix) <- traits$spName
+
+library("fundiversity")
+# Richness
+fd_fric(traits.matrix, p6_sub_abd)
+# Divergence
+fd_fdiv(traits.matrix, p6_sub_abd)
+# Evenness
+fd_feve(traits.matrix, p6_sub_abd)
+```
+
+## Partitioning
+
+### Creation of a metacommunity
+
+Each square in plot 6 is considered to be a local community derived from the metacommunity formed by the entire plot.
+A `abundances` object is created.
+
+```{r}
+#| label: p6sub
+#| exercise: true
+paracou6 %>% 
+  # Grouping
+  group_by(SubPlot, spName) %>% 
+  # Number of trees per species and subbplot
+  summarize(abundance = n())  %>%  
+  # A column per subplot
+  pivot_wider(
+    names_from = spName, 
+    values_from = abundance, 
+    values_fill  = 0
+  ) %>% 
+  # Rename the site column
+  rename(site = SubPlot) %>% 
+  # Name the subplots
+  mutate(site = paste("Subplot", site)) %>% 
+  as_abundances() %>%
+  # Set weights equal to the subplot areas
+  mutate(weight = 6.25 / 4) ->
+  p6_sub_abd
+```
+
+The diversity of all communities can be computed altogether.
+
+```{r}
+#| label: p6all
+#| exercise: true
+# Asymptotic richness of each subplot
+div_richness(p6_sub_abd)
+```
+
+The `metacommunity()` function agregates the communities.
+Abundances are summed according to the weights.
+
+```{r}
+metacommunity(p6_sub_abd)
+```
+
+The community weights can be arbitrary, but the estimators that can be used later are restricted if the weights are not equal because abundances may not be integers in the metacommunity.
+
+### Partitioning the diversity
+
+The `div_part()` function computes $\gamma$ diversity after building a metacommunity from local communities according to their weight.
+$\alpha$ entropy is the weighted mean local entropy, converted into Hill numbers to obtain $\alpha$ diversity.
+$\beta$ diversity is obtained as the ratio of $\gamma$ to $\alpha$ diversities.
+
+```{r}
+# label: div_part
+div_part(p6_sub_abd)
+```
+
+```{r divpart-quiz, echo=FALSE}
+quiz(
+  question("How is the data organised to create a metacommunity?",
+           answer("In a dataframe", correct = TRUE),
+           answer("In a matrix"),
+           answer("A column per community and a row per species", correct = TRUE),
+           answer("A column per species and a row per community"),
+           allow_retry = TRUE
+  ),
+  question("Alpha diversity is the weighted average of community diversity",
+           answer("True", correct = TRUE),
+           answer("False"),
+           incorrect = "See [the course](https://ericmarcon.github.io/MesuresBioDiv2/sec-betaCadre.html#sec-betaDecomposition)."
+  ),
+  question("Gamma diversity is the product of alpha and beta diversity",
+           answer("True", correct = TRUE),
+           answer("False"),
+           incorrect = "See [the course](https://ericmarcon.github.io/MesuresBioDiv2/chap-DedompHCDT.html)."
+  )
+)
+```
 
 ## References
