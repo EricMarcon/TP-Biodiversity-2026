@@ -307,14 +307,17 @@ comm_p6 %>%
 
 ### Information function
 
+Information brought by an individual:
+$I(p_s) = \log(1 / p_s)$
+
 ```{r}
 ggplot() +
-  geom_function(fun = \(p) {log(1 / p)})
+  # Increase the default number of points (101 to 1001) for precision
+  geom_function(fun = \(p) {log(1 / p)}, n = 1001)
 ```
 
-Species information.
-
-Information function.
+Information brought by a species:
+$p_s \log(1 / p_s)$
 
 ```{r}
 ggplot() +
@@ -328,13 +331,14 @@ Estimators.
 ```{r}
 ent_shannon(comm_p6, estimator = "naive") %>% 
   bind_rows(ent_shannon(comm_p6, estimator = "UnveilJ")) %>% 
-  bind_rows(ent_shannon(comm_p6, estimator = "ChaoJost"))
+  bind_rows(ent_shannon(comm_p6, estimator = "ChaoJost")) %>% 
+  print() ->
+  paracou_6_shannon
 ```
 
-Hill numbers.
+Effective number of species: $e^H$.
 
 ```{r}
-div_hill(comm_p6, q = 1, estimator = "naive") %>% 
-  bind_rows(div_hill(comm_p6, q = 1, estimator = "UnveilJ")) %>% 
-  bind_rows(div_hill(comm_p6, q = 1, estimator = "ChaoJost"))
+paracou_6_shannon %>% 
+  mutate(diversity = exp(entropy))
 ```
