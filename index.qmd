@@ -39,16 +39,6 @@ knitr::knit_hooks$set(
     )
   }
 )
-
-# Tidyverse default options
-library("tidyverse")
-# Set ggplotting to bw plot default, but with transparent background elements.  
-theme_set(theme_bw(base_size = 12))
-theme_update(
-  panel.background = element_rect(fill = "transparent", colour = NA),
-  plot.background = element_rect(fill = "transparent", colour = NA)
-)
-knitr::opts_chunk$set(dev.args = list(bg = "transparent"))
 ```
 
 ## Motivation
@@ -56,7 +46,7 @@ knitr::opts_chunk$set(dev.args = list(bg = "transparent"))
 This document contains code chunks to help you understanding the course.
 Don't hesitate to modify them, add your own notes and code.
 
-It comes with a practical you will run at home (Biodiv-Practical.Rmd).
+It comes with a practical you will run at home (`Biodiv-Practical.Rmd`).
 
 ## Species distributions
 
@@ -80,6 +70,7 @@ rcommunity(
   # Whittaker plot
   autoplot()
 ```
+
 ### Geometric
 
 Random distribution.
@@ -207,6 +198,13 @@ BCI %>%
 autoplot(BCI_all, fit_rac = TRUE, distribution = "lnorm")
 fit_rac(BCI_all, distribution = "lnorm") 
 ```
+Abundance frequency counts:
+```{r}
+BCI %>% 
+colSums() %>% 
+abd_freq_count() %>% 
+arrange(desc(abundance))
+```
 
 ### Accumulation curve
 
@@ -216,10 +214,15 @@ BCI_n <- abd_sum(BCI_all, as_numeric = TRUE)
 # Asymptotic richness
 BCI_richness <- div_richness(BCI_all, as_numeric = TRUE)
 BCI_all %>% 
-  accum_hill(levels = seq(from = 1, to = 2 * BCI_n, by = 10)) %>% 
+  accum_hill(
+    levels = seq(from = 1, to = 2 * BCI_n, by = 10),
+    # Run simulations to estimate uncertainty.
+    # Start with 10 simulations, run 100 later
+    n_simulations = 10,
+  ) %>% 
   autoplot() +
   geom_vline(xintercept = BCI_n, linetype = 2) +
-  geom_hline(yintercept = BCI_richness, linetype = 2)
+  geom_hline(yintercept = BCI_richness, linetype = 1)
 ```
 
 ## Richness
@@ -237,6 +240,15 @@ tibble(
 ```
 
 Richness:
+
+sample:
+
+```{r}
+div_richness(comm_dummy, estimator = "naive")
+```
+
+- asymptotic:
+
 ```{r}
 div_richness(comm_dummy)
 ```
@@ -252,7 +264,7 @@ paracou_6_abd %>%
 autoplot(comm_p6)
 ```
 
-Abundance frequences.
+Abundance frequencies:
 
 ```{r}
 comm_p6 %>% 
@@ -270,6 +282,25 @@ div_richness(comm_p6, estimator = "naive") %>%
   bind_rows(div_richness(comm_p6, estimator = "jackknife")) %>% 
   bind_rows(div_richness(comm_p6, estimator = "jackknife", jack_max = 1)) %>% 
   bind_rows(div_richness(comm_p6, estimator = "rarefy" ))
+```
+
+### Interpolation / extrapolation
+
+Diversity of 1 ha in Paracou:
+
+```{r}
+# Number of trees per hectare
+p6_density <- abd_sum(comm_p6, as_numeric = TRUE) / 6.25
+# Richness
+comm_p6 %>% 
+  div_richness(level = p6_density)
+```
+Diversity of 10 ha in Paracou:
+
+```{r}
+# Richness
+comm_p6 %>% 
+  div_richness(level = 10 * p6_density)
 ```
 
 ## Shannon
@@ -299,6 +330,7 @@ ent_shannon(comm_p6, estimator = "naive") %>%
   bind_rows(ent_shannon(comm_p6, estimator = "UnveilJ")) %>% 
   bind_rows(ent_shannon(comm_p6, estimator = "ChaoJost"))
 ```
+
 Hill numbers.
 
 ```{r}
