@@ -293,14 +293,14 @@ Diversity of 1 ha in Paracou:
 p6_density <- abd_sum(comm_p6, as_numeric = TRUE) / 6.25
 # Richness
 comm_p6 %>% 
-  div_richness(level = p6_density)
+  div_richness(level = round(p6_density))
 ```
 Diversity of 10 ha in Paracou:
 
 ```{r}
 # Richness
 comm_p6 %>% 
-  div_richness(level = 10 * p6_density)
+  div_richness(level = round(10 * p6_density))
 ```
 
 ## Shannon
