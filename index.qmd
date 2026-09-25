@@ -247,6 +247,8 @@ BCI_all %>%
 
 ### Dummy communities
 
+Build dummy communities.
+
 ```{r}
 tibble(
   sp_1 = c(10, 10, 10, 10),
@@ -257,15 +259,13 @@ tibble(
   comm_dummy
 ```
 
-Richness:
-
-sample:
+Sample richness.
 
 ```{r}
 div_richness(comm_dummy, estimator = "naive")
 ```
 
-- asymptotic:
+Asymptotic richness.
 
 ```{r}
 div_richness(comm_dummy)
@@ -282,7 +282,7 @@ paracou_6_abd %>%
 autoplot(comm_p6)
 ```
 
-Abundance frequencies:
+Abundance frequencies.
 
 ```{r}
 comm_p6 %>% 
@@ -304,7 +304,7 @@ div_richness(comm_p6, estimator = "naive") %>%
 
 ### Interpolation / extrapolation
 
-Diversity of 1 ha in Paracou:
+Diversity of 1 ha in Paracou.
 
 ```{r}
 # Number of trees per hectare
@@ -314,7 +314,7 @@ comm_p6 %>%
   div_richness(level = round(p6_density))
 ```
 
-Diversity of 10 ha in Paracou:
+Diversity of 10 ha in Paracou.
 
 ```{r}
 # Richness
@@ -386,7 +386,7 @@ paracou_6_simpson %>%
 
 # Generalised entropy
 
-Information brought by an individual: $I(p_s) = \ln_q(1 / p_s)$
+Information brought by an individual: $I(p_s) = \ln_q(1 / p_s)$.
 
 ```{r}
 ggplot() +
@@ -398,7 +398,7 @@ ggplot() +
   labs(x = "Probability", y = "Information", colour = "q")
 ```
 
-Information brought by a species: $p_s \ln_q(1 / p_s)$
+Information brought by a species: $p_s \ln_q(1 / p_s)$.
 
 ```{r}
 ggplot() +
@@ -411,7 +411,7 @@ ggplot() +
 
 ### Paracou 6
 
-Diversity profile
+Diversity profile.
 
 ```{r}
 comm_p6 %>% 
@@ -421,7 +421,7 @@ comm_p6 %>%
   theme(legend.position = "none")
 ```
 
-Compare estimators:
+Compare estimators.
 
 ```{r}
 comm_p6 %>% 
@@ -441,20 +441,6 @@ comm_p6 %>%
   labs(colour  = "Estimator")
 ```
 
-Compare Paracou and BCI, extend $q$:
-
-```{r}
-comm_p6 %>% 
-  profile_hill(orders = seq(from = 0, to = 4, by = 0.1)) %>% 
-  mutate(site = "Paracou") %>% 
-  bind_rows(
-    BCI_all %>% 
-    profile_hill(orders = seq(from = 0, to = 4, by = 0.1)) %>% 
-    mutate(site = "BCI")
-  ) %>% 
-  autoplot()
-```
-
 Extreme values.
 
 The reciprocal of the Berger-Parker index [@Berger1970] is the rarity of the most abundant species $^{+\infty}D$.
@@ -471,4 +457,67 @@ comm_p6 %>%
   # Reciprocal
   `^`(-1)
   
+```
+
+# Compare diversity
+
+Compare asymptotic diversity of Paracou and BCI, extend $q$.
+
+```{r}
+comm_p6 %>% 
+  profile_hill(orders = seq(from = 0, to = 4, by = 0.1)) %>% 
+  mutate(site = "Paracou") %>% 
+  bind_rows(
+    BCI_all %>% 
+    profile_hill(orders = seq(from = 0, to = 4, by = 0.1)) %>% 
+    mutate(site = "BCI")
+  ) %>% 
+  autoplot()
+```
+
+The sampling effort is very different: 50 ha in BCI, 6.25 ha in Paracou.
+The asymptotic estimation is less reliable in Paracou.
+
+Sample coverage.
+
+```{r}
+coverage(comm_p6) %>% 
+  bind_rows(coverage(BCI_all))
+```
+
+Compare diversity at the same sampling effort, say 10 ha.
+
+```{r}
+# Number of trees in 10 ha
+p6_n_10ha <- round(abd_sum(comm_p6, as_numeric = TRUE) / 6.25 * 10)
+BCI_n_10_ha <- round(sum(BCI_all) / 5)
+```
+
+Compare diversity of 10 ha.
+
+```{r}
+comm_p6 %>% 
+  profile_hill(level = p6_n_10ha) %>% 
+  mutate(site = "Paracou") %>% 
+  bind_rows(
+    BCI_all %>% 
+    profile_hill(level = BCI_n_10_ha) %>% 
+    mutate(site = "BCI")
+  ) %>% 
+  autoplot()
+```
+
+Compare diversity at the same sample coverage [@Chao2012b], that of Paracou.
+
+```{r}
+reference_coverage <- coverage(comm_p6, as_numeric = TRUE)
+comm_p6 %>% 
+  profile_hill(level = reference_coverage) %>% 
+  mutate(site = "Paracou") %>% 
+  bind_rows(
+    BCI_all %>% 
+    profile_hill(level = reference_coverage) %>% 
+    mutate(site = "BCI")
+  ) %>% 
+  autoplot()
 ```
