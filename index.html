@@ -183,6 +183,11 @@ window.Quarto = {
   <li><a href="#standardized-diversity" id="toc-standardized-diversity" class="nav-link" data-scroll-target="#standardized-diversity"><span class="header-section-number">8.2</span> Standardized diversity</a></li>
   <li><a href="#sample-coverage" id="toc-sample-coverage" class="nav-link" data-scroll-target="#sample-coverage"><span class="header-section-number">8.3</span> Sample coverage</a></li>
   </ul></li>
+  <li><a href="#phylogenetic-diversity" id="toc-phylogenetic-diversity" class="nav-link" data-scroll-target="#phylogenetic-diversity"><span class="header-section-number">9</span> Phylogenetic diversity</a>
+  <ul class="collapse">
+  <li><a href="#mock-data" id="toc-mock-data" class="nav-link" data-scroll-target="#mock-data"><span class="header-section-number">9.1</span> Mock data</a></li>
+  <li><a href="#paracou-6-4" id="toc-paracou-6-4" class="nav-link" data-scroll-target="#paracou-6-4"><span class="header-section-number">9.2</span> Paracou 6</a></li>
+  </ul></li>
   </ul>
 </nav>
 </div>
@@ -383,8 +388,8 @@ window.Quarto = {
 <pre><code># A tibble: 2 × 3
   site                mu sigma
   &lt;chr&gt;            &lt;dbl&gt; &lt;dbl&gt;
-1 Large log-normal 15.3   1.01
-2 Small log-normal  1.83  1.03</code></pre>
+1 Large log-normal 15.3  0.974
+2 Small log-normal  1.84 0.997</code></pre>
 </div>
 </div>
 </section>
@@ -905,6 +910,132 @@ Removed 1 row containing missing values or values outside the scale range
 <div>
 <figure class="figure">
 <p><img src="index_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="phylogenetic-diversity" class="level1" data-number="9">
+<h1 data-number="9"><span class="header-section-number">9</span> Phylogenetic diversity</h1>
+<section id="mock-data" class="level2" data-number="9.1">
+<h2 data-number="9.1" class="anchored" data-anchor-id="mock-data"><span class="header-section-number">9.1</span> Mock data</h2>
+<p>A simple community with 3 species.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>mock_3sp_abd <span class="sc">%&gt;%</span> </span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_abundances</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">site =</span> <span class="st">"Mock 3 species"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>() <span class="ot">-&gt;</span></span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>  mock_3sp_abundances</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 5
+  site           weight     A     B     C
+  &lt;chr&gt;           &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 Mock 3 species      6     3     2     1</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ape"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'ape'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:dplyr':
+
+    where</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mock_3sp_tree, <span class="at">direction =</span> <span class="st">"downwards"</span>, <span class="at">srt =</span> <span class="dv">90</span>)</span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a><span class="fu">axis</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-35-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>PD is the total length of branches</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">div_pd</span>(mock_3sp_abd, <span class="at">tree =</span> mock_3sp_tree)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  estimator order diversity
+  &lt;chr&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+1 naive         0       2.5</code></pre>
+</div>
+</div>
+<p>Rao.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ent_rao</span>(mock_3sp_abundances, <span class="at">tree =</span> mock_3sp_tree, <span class="at">estimator =</span> <span class="st">"naive"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 5
+  site           weight estimator order entropy
+  &lt;chr&gt;           &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+1 Mock 3 species      6 naive         2   0.528</code></pre>
+</div>
+</div>
+<p>The tree is normalized to height = 1 by default. Without normalization:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ent_rao</span>(</span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>  mock_3sp_abundances, </span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">tree =</span> mock_3sp_tree, </span>
+<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimator =</span> <span class="st">"naive"</span>, </span>
+<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">normalize =</span> <span class="cn">FALSE</span></span>
+<span id="cb72-6"><a href="#cb72-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 5
+  site           weight estimator order entropy
+  &lt;chr&gt;           &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+1 Mock 3 species      6 naive         2   0.528</code></pre>
+</div>
+</div>
+</section>
+<section id="paracou-6-4" class="level2" data-number="9.2">
+<h2 data-number="9.2" class="anchored" data-anchor-id="paracou-6-4"><span class="header-section-number">9.2</span> Paracou 6</h2>
+<p><code>paracou_6_taxo</code> is a taxonomic tree: distance is 1 between species of the same genus, 2 between genera of the same family, 3 between families.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(paracou_6_taxo, <span class="at">type =</span> <span class="st">"fan"</span>, <span class="at">show.tip.label =</span> <span class="cn">FALSE</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-39-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Calculate Rao’s entropy and phylogenetic entropy of order 2</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ent_rao</span>(p6_abundances, <span class="at">tree =</span> paracou_6_taxo) <span class="sc">%&gt;%</span> </span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(</span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ent_phylo</span>(p6_abundances, <span class="at">tree =</span> paracou_6_taxo, <span class="at">q =</span> <span class="dv">2</span>)</span>
+<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 6
+  site      weight estimator order entropy     q
+  &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;
+1 Paracou 6   6.25 Lande         2   0.976    NA
+2 Paracou 6   6.25 UnveilJ      NA   0.949     2</code></pre>
+</div>
+</div>
+<p>Rao’s entropy is not an effective number of species, but the average phylogenetic distance between two individuals. The corresponding Hill number is:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="fu">div_phylo</span>(p6_abundances, <span class="at">tree =</span> paracou_6_taxo, <span class="at">q =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 4
+  site      weight estimator diversity
+  &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;         &lt;dbl&gt;
+1 Paracou 6   6.25 UnveilJ        19.5</code></pre>
+</div>
+</div>
+<p>Diversity profile</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="fu">profile_phylo</span>(p6_abundances, <span class="at">tree =</span> paracou_6_taxo) <span class="sc">%&gt;%</span> </span>
+<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-42-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
