@@ -279,15 +279,18 @@ Prepare the data: gather the four subplots.
 
 ```{r}
 paracou_6_abd %>% 
-  metacommunity() ->
-  comm_p6
-autoplot(comm_p6)
+  # Gather all sites
+  metacommunity() %>% 
+  # Rename "matacommunity"
+  mutate(site = "Paracou 6") ->
+  p6_abundances
+autoplot(p6_abundances)
 ```
 
 Abundance frequencies.
 
 ```{r}
-comm_p6 %>% 
+p6_abundances %>% 
   as.numeric() %>% 
   abd_freq_count()
 ```
@@ -295,12 +298,12 @@ comm_p6 %>%
 Estimators of richness.
 
 ```{r}
-div_richness(comm_p6, estimator = "naive") %>% 
-  bind_rows(div_richness(comm_p6, estimator = "Chao1")) %>% 
-  bind_rows(div_richness(comm_p6, estimator = "iChao")) %>% 
+div_richness(p6_abundances, estimator = "naive") %>% 
+  bind_rows(div_richness(p6_abundances, estimator = "Chao1")) %>% 
+  bind_rows(div_richness(p6_abundances, estimator = "iChao")) %>% 
   # Default estimator
-  bind_rows(div_richness(comm_p6, estimator = "jackknife")) %>% 
-  bind_rows(div_richness(comm_p6, estimator = "jackknife", jack_max = 1))
+  bind_rows(div_richness(p6_abundances, estimator = "jackknife")) %>% 
+  bind_rows(div_richness(p6_abundances, estimator = "jackknife", jack_max = 1))
 ```
 
 ### Interpolation / extrapolation
@@ -309,9 +312,9 @@ Diversity of 1 ha in Paracou.
 
 ```{r}
 # Number of trees per hectare
-p6_density <- abd_sum(comm_p6, as_numeric = TRUE) / 6.25
+p6_density <- abd_sum(p6_abundances, as_numeric = TRUE) / 6.25
 # Richness
-comm_p6 %>% 
+p6_abundances %>% 
   div_richness(level = round(p6_density))
 ```
 
@@ -319,7 +322,7 @@ Diversity of 10 ha in Paracou.
 
 ```{r}
 # Richness
-comm_p6 %>% 
+p6_abundances %>% 
   div_richness(level = round(10 * p6_density))
 ```
 
@@ -349,17 +352,17 @@ ggplot() +
 Estimators.
 
 ```{r}
-ent_shannon(comm_p6, estimator = "naive") %>% 
-  bind_rows(ent_shannon(comm_p6, estimator = "UnveilJ")) %>% 
-  bind_rows(ent_shannon(comm_p6, estimator = "ChaoJost")) %>% 
+ent_shannon(p6_abundances, estimator = "naive") %>% 
+  bind_rows(ent_shannon(p6_abundances, estimator = "UnveilJ")) %>% 
+  bind_rows(ent_shannon(p6_abundances, estimator = "ChaoJost")) %>% 
   print() ->
-  paracou_6_shannon
+  p6_shannon
 ```
 
 Effective number of species: $e^H$.
 
 ```{r}
-paracou_6_shannon %>% 
+p6_shannon %>% 
   mutate(diversity = exp(entropy))
 ```
 
@@ -370,18 +373,18 @@ paracou_6_shannon %>%
 Estimators.
 
 ```{r}
-ent_simpson(comm_p6, estimator = "naive") %>% 
-  bind_rows(ent_simpson(comm_p6, estimator = "Lande")) %>% 
-  bind_rows(ent_simpson(comm_p6, estimator = "UnveilJ")) %>% 
-  bind_rows(ent_simpson(comm_p6, estimator = "ChaoJost")) %>% 
+ent_simpson(p6_abundances, estimator = "naive") %>% 
+  bind_rows(ent_simpson(p6_abundances, estimator = "Lande")) %>% 
+  bind_rows(ent_simpson(p6_abundances, estimator = "UnveilJ")) %>% 
+  bind_rows(ent_simpson(p6_abundances, estimator = "ChaoJost")) %>% 
   print() ->
-  paracou_6_simpson
+  p6_simpson
 ```
 
 Effective number of species: $1 / (1 - E)$.
 
 ```{r}
-paracou_6_simpson %>% 
+p6_simpson %>% 
   mutate(diversity = 1 / (1 - entropy))
 ```
 
@@ -394,11 +397,11 @@ Information brought by an individual: $I(p_s) = \ln_q(1 / p_s)$.
 ```{r}
 ggplot() +
   # Increase the default number of points (101 to 1001) for precision
-  geom_function(fun = \(p) {ln_q(1 / p, q = 0)}, n = 1001, aes(colour = "0")) + 
-  geom_function(fun = \(p) {ln_q(1 / p, q = 1)}, n = 1001, aes(colour = "1")) + 
-  geom_function(fun = \(p) {ln_q(1 / p, q = 2)}, n = 1001, aes(colour = "2")) +
+  geom_function(fun = \(p) {ln_q(1 / p, q = 0)}, n = 1001, aes(color = "0")) + 
+  geom_function(fun = \(p) {ln_q(1 / p, q = 1)}, n = 1001, aes(color = "1")) + 
+  geom_function(fun = \(p) {ln_q(1 / p, q = 2)}, n = 1001, aes(color = "2")) +
   scale_y_continuous(limits = c(0, 10)) +
-  labs(x = "Probability", y = "Information", colour = "q")
+  labs(x = "Probability", y = "Information", color = "q")
 ```
 
 Information brought by a species: $p_s \ln_q(1 / p_s)$.
@@ -406,10 +409,10 @@ Information brought by a species: $p_s \ln_q(1 / p_s)$.
 ```{r}
 ggplot() +
   # Increase the default number of points (101 to 1001) for precision
-  geom_function(fun = \(p) {p * ln_q(1 / p, q = 0)}, n = 1001, aes(colour = "0")) + 
-  geom_function(fun = \(p) {p * ln_q(1 / p, q = 1)}, n = 1001, aes(colour = "1")) + 
-  geom_function(fun = \(p) {p * ln_q(1 / p, q = 2)}, n = 1001, aes(colour = "2")) +
-  labs(x = "Probability", y = "Information", colour  = "q")
+  geom_function(fun = \(p) {p * ln_q(1 / p, q = 0)}, n = 1001, aes(color = "0")) + 
+  geom_function(fun = \(p) {p * ln_q(1 / p, q = 1)}, n = 1001, aes(color = "1")) + 
+  geom_function(fun = \(p) {p * ln_q(1 / p, q = 2)}, n = 1001, aes(color = "2")) +
+  labs(x = "Probability", y = "Information", color  = "q")
 ```
 
 ## Paracou 6
@@ -417,7 +420,7 @@ ggplot() +
 Diversity profile.
 
 ```{r}
-comm_p6 %>% 
+p6_abundances %>% 
   profile_hill() %>% 
   autoplot() +
   # Don't print the legend
@@ -427,21 +430,22 @@ comm_p6 %>%
 Compare estimators.
 
 ```{r}
-comm_p6 %>% 
-  profile_hill(estimator = "UnveilJ") %>% 
+p6_abundances %>% 
+  profile_hill(estimator = "UnveilJ") %>%
+  # Use the site name to store the estimator's name
   mutate(site = "UnveilJ") %>% 
   bind_rows(
-    comm_p6 %>% 
+    p6_abundances %>% 
     profile_hill(estimator = "ChaoJost") %>% 
     mutate(site = "ChaoJost")
   ) %>% 
   bind_rows(
-    comm_p6 %>% 
+    p6_abundances %>% 
     profile_hill(estimator = "naive") %>% 
     mutate(site = "naive")
   ) %>% 
   autoplot() +
-  labs(colour  = "Estimator")
+  labs(color  = "Estimator")
 ```
 
 Extreme values.
@@ -450,9 +454,9 @@ The reciprocal of the Berger-Parker index [@Berger1970] is the rarity of the mos
 
 ```{r}
 # q = 1000 is enough for infinity
-div_hill(comm_p6, q = 1000)
+div_hill(p6_abundances, q = 1000)
 # Compare to 
-comm_p6 %>% 
+p6_abundances %>% 
   # Extract proobabilities
   as_probabilities(as_numeric = TRUE) %>% 
   # Max value
@@ -469,14 +473,10 @@ comm_p6 %>%
 Compare asymptotic diversity of Paracou and BCI, extend $q$.
 
 ```{r}
-comm_p6 %>% 
-  profile_hill(orders = seq(from = 0, to = 4, by = 0.1)) %>% 
-  mutate(site = "Paracou") %>% 
-  bind_rows(
-    BCI_all %>% 
-    profile_hill(orders = seq(from = 0, to = 4, by = 0.1)) %>% 
-    mutate(site = "BCI")
-  ) %>% 
+# Orders from 0 to 4
+q_seq_0_4 <- seq(from = 0, to = 4, by = 0.1)
+profile_hill(p6_abundances, orders = q_seq_0_4) %>% 
+  bind_rows(profile_hill(BCI_all, orders = q_seq_0_4)) %>% 
   autoplot()
 ```
 
@@ -489,42 +489,30 @@ Compare diversity at the same sampling effort, say 10 ha.
 
 ```{r}
 # Number of trees in 10 ha
-p6_n_10ha <- round(abd_sum(comm_p6, as_numeric = TRUE) / 6.25 * 10)
+p6_n_10ha <- round(abd_sum(p6_abundances, as_numeric = TRUE) / 6.25 * 10)
 BCI_n_10_ha <- round(sum(BCI_all) / 5)
 ```
 
 Compare diversity of 10 ha.
 
 ```{r}
-comm_p6 %>% 
-  profile_hill(level = p6_n_10ha) %>% 
-  mutate(site = "Paracou") %>% 
-  bind_rows(
-    BCI_all %>% 
-    profile_hill(level = BCI_n_10_ha) %>% 
-    mutate(site = "BCI")
-  ) %>% 
+profile_hill(p6_abundances, level = p6_n_10ha) %>% 
+  bind_rows(profile_hill(BCI_all, level = BCI_n_10_ha)) %>% 
   autoplot()
 ```
 
 ## Sample coverage
 
 ```{r}
-coverage(comm_p6) %>% 
+coverage(p6_abundances) %>% 
   bind_rows(coverage(BCI_all))
 ```
 
 Compare diversity at the same sample coverage [@Chao2012b], that of Paracou.
 
 ```{r}
-reference_coverage <- coverage(comm_p6, as_numeric = TRUE)
-comm_p6 %>% 
-  profile_hill(level = reference_coverage) %>% 
-  mutate(site = "Paracou") %>% 
-  bind_rows(
-    BCI_all %>% 
-    profile_hill(level = reference_coverage) %>% 
-    mutate(site = "BCI")
-  ) %>% 
+reference_coverage <- coverage(p6_abundances, as_numeric = TRUE)
+profile_hill(p6_abundances, level = reference_coverage) %>% 
+  bind_rows(profile_hill(BCI_all, level = reference_coverage)) %>% 
   autoplot()
 ```
