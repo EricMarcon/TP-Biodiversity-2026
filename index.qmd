@@ -57,16 +57,16 @@ knitr::knit_hooks$set(
 )
 ```
 
-## Motivation
+# Motivation
 
 This document contains code chunks to help you understanding the course.
 Don't hesitate to modify them, add your own notes and code.
 
 It comes with a practical you will run at home (`Biodiv-Practical.Rmd`).
 
-## Species distributions
+# Species distributions
 
-### Broken stick
+## Broken stick
 
 Random distributions are created by `divent::rxxx()`functions.
 
@@ -87,7 +87,7 @@ rcommunity(
   autoplot()
 ```
 
-### Geometric
+## Geometric
 
 Random distribution.
 
@@ -192,9 +192,9 @@ autoplot(comm_lnorm, fit_rac = TRUE, distribution = "lnorm")
 fit_rac(comm_lnorm, distribution = "lnorm") 
 ```
 
-## Species Accumulation Curves
+# Species Accumulation Curves
 
-### BCI data
+## BCI data
 
 Gather all subplots.
 
@@ -215,7 +215,7 @@ autoplot(BCI_all, fit_rac = TRUE, distribution = "lnorm")
 fit_rac(BCI_all, distribution = "lnorm") 
 ```
 
-Abundance frequency counts:
+Abundance frequency counts help read the figure.
 
 ```{r}
 BCI %>% 
@@ -225,6 +225,8 @@ arrange(desc(abundance))
 ```
 
 ### Accumulation curve
+
+Compute the accumulation curve of BCI up to twice the sampling effort, with its confidence interval.
 
 ```{r}
 # Number of trees in BCI
@@ -243,9 +245,9 @@ BCI_all %>%
   geom_hline(yintercept = BCI_richness, linetype = 1)
 ```
 
-## Richness
+# Richness
 
-### Dummy communities
+## Dummy communities
 
 Build dummy communities.
 
@@ -290,7 +292,7 @@ comm_p6 %>%
   abd_freq_count()
 ```
 
-Estimators.
+Estimators of richness.
 
 ```{r}
 div_richness(comm_p6, estimator = "naive") %>% 
@@ -298,8 +300,7 @@ div_richness(comm_p6, estimator = "naive") %>%
   bind_rows(div_richness(comm_p6, estimator = "iChao")) %>% 
   # Default estimator
   bind_rows(div_richness(comm_p6, estimator = "jackknife")) %>% 
-  bind_rows(div_richness(comm_p6, estimator = "jackknife", jack_max = 1)) %>% 
-  bind_rows(div_richness(comm_p6, estimator = "rarefy" ))
+  bind_rows(div_richness(comm_p6, estimator = "jackknife", jack_max = 1))
 ```
 
 ### Interpolation / extrapolation
@@ -322,11 +323,11 @@ comm_p6 %>%
   div_richness(level = round(10 * p6_density))
 ```
 
-## Shannon
+# Shannon
 
-### Information function
+## Information function
 
-Information brought by an individual: $I(p_s) = \ln(1 / p_s)$
+Information brought by an individual: $I(p_s) = \ln(1 / p_s)$.
 
 ```{r}
 ggplot() +
@@ -335,7 +336,7 @@ ggplot() +
   labs(x = "Probability", y = "Information")
 ```
 
-Information brought by a species: $p_s \ln(1 / p_s)$
+Information brought by a species: $p_s \ln(1 / p_s)$.
 
 ```{r}
 ggplot() +
@@ -362,9 +363,9 @@ paracou_6_shannon %>%
   mutate(diversity = exp(entropy))
 ```
 
-## Simpson
+# Simpson
 
-### Paracou 6
+## Paracou 6
 
 Estimators.
 
@@ -385,6 +386,8 @@ paracou_6_simpson %>%
 ```
 
 # Generalised entropy
+
+## Information
 
 Information brought by an individual: $I(p_s) = \ln_q(1 / p_s)$.
 
@@ -409,7 +412,7 @@ ggplot() +
   labs(x = "Probability", y = "Information", colour  = "q")
 ```
 
-### Paracou 6
+## Paracou 6
 
 Diversity profile.
 
@@ -459,7 +462,9 @@ comm_p6 %>%
   
 ```
 
-# Compare diversity
+# Comparing diversity
+
+## Asymptotic diversity
 
 Compare asymptotic diversity of Paracou and BCI, extend $q$.
 
@@ -475,15 +480,10 @@ comm_p6 %>%
   autoplot()
 ```
 
+## Standardized diversity
+
 The sampling effort is very different: 50 ha in BCI, 6.25 ha in Paracou.
 The asymptotic estimation is less reliable in Paracou.
-
-Sample coverage.
-
-```{r}
-coverage(comm_p6) %>% 
-  bind_rows(coverage(BCI_all))
-```
 
 Compare diversity at the same sampling effort, say 10 ha.
 
@@ -505,6 +505,13 @@ comm_p6 %>%
     mutate(site = "BCI")
   ) %>% 
   autoplot()
+```
+
+## Sample coverage
+
+```{r}
+coverage(comm_p6) %>% 
+  bind_rows(coverage(BCI_all))
 ```
 
 Compare diversity at the same sample coverage [@Chao2012b], that of Paracou.
