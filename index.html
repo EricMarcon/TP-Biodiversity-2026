@@ -61,7 +61,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="index_files/libs/clipboard/clipboard.min.js"></script>
@@ -74,15 +93,84 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="index_files/libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="index_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="index_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="index_files/libs/bootstrap/bootstrap-215b371544c282197b31c8aa00ce3677.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="index_files/libs/bootstrap/bootstrap-917079515d91bccb85b543faf8aa8bb6.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
-<body class="fullcontent quarto-light">
+<body class="quarto-light">
 
 <div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
-
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#motivation" id="toc-motivation" class="nav-link active" data-scroll-target="#motivation"><span class="header-section-number">0.1</span> Motivation</a></li>
+  <li><a href="#species-distributions" id="toc-species-distributions" class="nav-link" data-scroll-target="#species-distributions"><span class="header-section-number">0.2</span> Species distributions</a>
+  <ul class="collapse">
+  <li><a href="#broken-stick" id="toc-broken-stick" class="nav-link" data-scroll-target="#broken-stick"><span class="header-section-number">0.2.1</span> Broken stick</a></li>
+  <li><a href="#geometric" id="toc-geometric" class="nav-link" data-scroll-target="#geometric"><span class="header-section-number">0.2.2</span> Geometric</a></li>
+  <li><a href="#lognormal" id="toc-lognormal" class="nav-link" data-scroll-target="#lognormal"><span class="header-section-number">0.2.3</span> Lognormal</a></li>
+  <li><a href="#log-series" id="toc-log-series" class="nav-link" data-scroll-target="#log-series"><span class="header-section-number">0.2.4</span> Log-series</a></li>
+  <li><a href="#estimate-the-parameters" id="toc-estimate-the-parameters" class="nav-link" data-scroll-target="#estimate-the-parameters"><span class="header-section-number">0.2.5</span> Estimate the parameters</a></li>
+  </ul></li>
+  <li><a href="#species-accumulation-curves" id="toc-species-accumulation-curves" class="nav-link" data-scroll-target="#species-accumulation-curves"><span class="header-section-number">0.3</span> Species Accumulation Curves</a>
+  <ul class="collapse">
+  <li><a href="#bci-data" id="toc-bci-data" class="nav-link" data-scroll-target="#bci-data"><span class="header-section-number">0.3.1</span> BCI data</a></li>
+  <li><a href="#accumulation-curve" id="toc-accumulation-curve" class="nav-link" data-scroll-target="#accumulation-curve"><span class="header-section-number">0.3.2</span> Accumulation curve</a></li>
+  </ul></li>
+  <li><a href="#richness" id="toc-richness" class="nav-link" data-scroll-target="#richness"><span class="header-section-number">0.4</span> Richness</a>
+  <ul class="collapse">
+  <li><a href="#dummy-communities" id="toc-dummy-communities" class="nav-link" data-scroll-target="#dummy-communities"><span class="header-section-number">0.4.1</span> Dummy communities</a></li>
+  <li><a href="#paracou-6" id="toc-paracou-6" class="nav-link" data-scroll-target="#paracou-6"><span class="header-section-number">0.4.2</span> Paracou 6</a></li>
+  <li><a href="#interpolation-extrapolation" id="toc-interpolation-extrapolation" class="nav-link" data-scroll-target="#interpolation-extrapolation"><span class="header-section-number">0.4.3</span> Interpolation / extrapolation</a></li>
+  </ul></li>
+  <li><a href="#shannon" id="toc-shannon" class="nav-link" data-scroll-target="#shannon"><span class="header-section-number">0.5</span> Shannon</a>
+  <ul class="collapse">
+  <li><a href="#information-function" id="toc-information-function" class="nav-link" data-scroll-target="#information-function"><span class="header-section-number">0.5.1</span> Information function</a></li>
+  <li><a href="#paracou-6-1" id="toc-paracou-6-1" class="nav-link" data-scroll-target="#paracou-6-1"><span class="header-section-number">0.5.2</span> Paracou 6</a></li>
+  </ul></li>
+  <li><a href="#simpson" id="toc-simpson" class="nav-link" data-scroll-target="#simpson"><span class="header-section-number">0.6</span> Simpson</a>
+  <ul class="collapse">
+  <li><a href="#paracou-6-2" id="toc-paracou-6-2" class="nav-link" data-scroll-target="#paracou-6-2"><span class="header-section-number">0.6.1</span> Paracou 6</a></li>
+  </ul></li>
+  <li><a href="#generalised-entropy" id="toc-generalised-entropy" class="nav-link" data-scroll-target="#generalised-entropy"><span class="header-section-number">1</span> Generalised entropy</a>
+  <ul class="collapse">
+  <li><a href="#paracou-6-3" id="toc-paracou-6-3" class="nav-link" data-scroll-target="#paracou-6-3"><span class="header-section-number">1.0.1</span> Paracou 6</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
@@ -104,15 +192,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="motivation" class="level2">
-<h2 class="anchored" data-anchor-id="motivation">Motivation</h2>
+<section id="motivation" class="level2" data-number="0.1">
+<h2 data-number="0.1" class="anchored" data-anchor-id="motivation"><span class="header-section-number">0.1</span> Motivation</h2>
 <p>This document contains code chunks to help you understanding the course. Don’t hesitate to modify them, add your own notes and code.</p>
 <p>It comes with a practical you will run at home (<code>Biodiv-Practical.Rmd</code>).</p>
 </section>
-<section id="species-distributions" class="level2">
-<h2 class="anchored" data-anchor-id="species-distributions">Species distributions</h2>
-<section id="broken-stick" class="level3">
-<h3 class="anchored" data-anchor-id="broken-stick">Broken stick</h3>
+<section id="species-distributions" class="level2" data-number="0.2">
+<h2 data-number="0.2" class="anchored" data-anchor-id="species-distributions"><span class="header-section-number">0.2</span> Species distributions</h2>
+<section id="broken-stick" class="level3" data-number="0.2.1">
+<h3 data-number="0.2.1" class="anchored" data-anchor-id="broken-stick"><span class="header-section-number">0.2.1</span> Broken stick</h3>
 <p>Random distributions are created by <code>divent::rxxx()</code>functions.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"tidyverse"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -130,7 +218,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"divent"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Le chargement a nécessité le package : Rcpp</code></pre>
+<pre><code>Loading required package: Rcpp</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rcommunity</span>(</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># One community</span></span>
@@ -153,8 +241,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="geometric" class="level3">
-<h3 class="anchored" data-anchor-id="geometric">Geometric</h3>
+<section id="geometric" class="level3" data-number="0.2.2">
+<h3 data-number="0.2.2" class="anchored" data-anchor-id="geometric"><span class="header-section-number">0.2.2</span> Geometric</h3>
 <p>Random distribution.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rcommunity</span>(</span>
@@ -179,8 +267,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="lognormal" class="level3">
-<h3 class="anchored" data-anchor-id="lognormal">Lognormal</h3>
+<section id="lognormal" class="level3" data-number="0.2.3">
+<h3 data-number="0.2.3" class="anchored" data-anchor-id="lognormal"><span class="header-section-number">0.2.3</span> Lognormal</h3>
 <p>Random distribution.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rcommunity</span>(</span>
@@ -206,8 +294,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>Modify the standard deviation.</p>
 </section>
-<section id="log-series" class="level3">
-<h3 class="anchored" data-anchor-id="log-series">Log-series</h3>
+<section id="log-series" class="level3" data-number="0.2.4">
+<h3 data-number="0.2.4" class="anchored" data-anchor-id="log-series"><span class="header-section-number">0.2.4</span> Log-series</h3>
 <p>Random distribution.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rcommunity</span>(</span>
@@ -231,8 +319,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="estimate-the-parameters" class="level3">
-<h3 class="anchored" data-anchor-id="estimate-the-parameters">Estimate the parameters</h3>
+<section id="estimate-the-parameters" class="level3" data-number="0.2.5">
+<h3 data-number="0.2.5" class="anchored" data-anchor-id="estimate-the-parameters"><span class="header-section-number">0.2.5</span> Estimate the parameters</h3>
 <p>Draw a very large lognormal distribution.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rcommunity</span>(</span>
@@ -281,21 +369,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code># A tibble: 2 × 3
   site                mu sigma
   &lt;chr&gt;            &lt;dbl&gt; &lt;dbl&gt;
-1 Large log-normal 15.2   1.08
-2 Small log-normal  1.81  1.03</code></pre>
+1 Large log-normal 15.3   1.06
+2 Small log-normal  1.88  1.02</code></pre>
 </div>
 </div>
 </section>
 </section>
-<section id="species-accumulation-curves" class="level2">
-<h2 class="anchored" data-anchor-id="species-accumulation-curves">Species Accumulation Curves</h2>
-<section id="bci-data" class="level3">
-<h3 class="anchored" data-anchor-id="bci-data">BCI data</h3>
+<section id="species-accumulation-curves" class="level2" data-number="0.3">
+<h2 data-number="0.3" class="anchored" data-anchor-id="species-accumulation-curves"><span class="header-section-number">0.3</span> Species Accumulation Curves</h2>
+<section id="bci-data" class="level3" data-number="0.3.1">
+<h3 data-number="0.3.1" class="anchored" data-anchor-id="bci-data"><span class="header-section-number">0.3.1</span> BCI data</h3>
 <p>Gather all subplots.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"vegan"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Le chargement a nécessité le package : permute</code></pre>
+<pre><code>Loading required package: permute</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(BCI)</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>BCI <span class="sc">%&gt;%</span> </span>
@@ -333,7 +421,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 108 × 2
    abundance number_of_species
-       &lt;int&gt;             &lt;int&gt;
+       &lt;dbl&gt;         &lt;int[1d]&gt;
  1      1717                 1
  2      1681                 1
  3       983                 1
@@ -348,8 +436,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="accumulation-curve" class="level3">
-<h3 class="anchored" data-anchor-id="accumulation-curve">Accumulation curve</h3>
+<section id="accumulation-curve" class="level3" data-number="0.3.2">
+<h3 data-number="0.3.2" class="anchored" data-anchor-id="accumulation-curve"><span class="header-section-number">0.3.2</span> Accumulation curve</h3>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Number of trees in BCI</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>BCI_n <span class="ot">&lt;-</span> <span class="fu">abd_sum</span>(BCI_all, <span class="at">as_numeric =</span> <span class="cn">TRUE</span>)</span>
@@ -375,10 +463,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </section>
 </section>
-<section id="richness" class="level2">
-<h2 class="anchored" data-anchor-id="richness">Richness</h2>
-<section id="dummy-communities" class="level3">
-<h3 class="anchored" data-anchor-id="dummy-communities">Dummy communities</h3>
+<section id="richness" class="level2" data-number="0.4">
+<h2 data-number="0.4" class="anchored" data-anchor-id="richness"><span class="header-section-number">0.4</span> Richness</h2>
+<section id="dummy-communities" class="level3" data-number="0.4.1">
+<h3 data-number="0.4.1" class="anchored" data-anchor-id="dummy-communities"><span class="header-section-number">0.4.1</span> Dummy communities</h3>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">sp_1 =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">10</span>),</span>
@@ -427,8 +515,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="paracou-6" class="level3">
-<h3 class="anchored" data-anchor-id="paracou-6">Paracou 6</h3>
+<section id="paracou-6" class="level3" data-number="0.4.2">
+<h3 data-number="0.4.2" class="anchored" data-anchor-id="paracou-6"><span class="header-section-number">0.4.2</span> Paracou 6</h3>
 <p>Prepare the data: gather the four subplots.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>paracou_6_abd <span class="sc">%&gt;%</span> </span>
@@ -451,7 +539,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 49 × 2
    abundance number_of_species
-       &lt;int&gt;             &lt;int&gt;
+       &lt;dbl&gt;         &lt;int[1d]&gt;
  1         1                98
  2         2                58
  3         3                35
@@ -487,719 +575,46 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="interpolation-extrapolation" class="level3">
-<h3 class="anchored" data-anchor-id="interpolation-extrapolation">Interpolation / extrapolation</h3>
+<section id="interpolation-extrapolation" class="level3" data-number="0.4.3">
+<h3 data-number="0.4.3" class="anchored" data-anchor-id="interpolation-extrapolation"><span class="header-section-number">0.4.3</span> Interpolation / extrapolation</h3>
 <p>Diversity of 1 ha in Paracou:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Number of trees per hectare</span></span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>p6_density <span class="ot">&lt;-</span> <span class="fu">abd_sum</span>(comm_p6, <span class="at">as_numeric =</span> <span class="cn">TRUE</span>) <span class="sc">/</span> <span class="fl">6.25</span></span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Richness</span></span>
 <span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>comm_p6 <span class="sc">%&gt;%</span> </span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">div_richness</span>(<span class="at">level =</span> p6_density)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567
-Warning in lchoose(sample_size - abd, level): 'k' (566.56) doit être entier,
-arrondi à 567</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in lchoose(sample_size, level): 'k' (566.56) doit être entier, arrondi
-à 567</code></pre>
-</div>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">div_richness</span>(<span class="at">level =</span> <span class="fu">round</span>(p6_density))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 6
   site          weight estimator order level diversity
   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;
-1 metacommunity   6.25 SAC           0  567.      159.</code></pre>
+1 metacommunity   6.25 SAC           0   567      159.</code></pre>
 </div>
 </div>
 <p>Diversity of 10 ha in Paracou:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Richness</span></span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>comm_p6 <span class="sc">%&gt;%</span> </span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">div_richness</span>(<span class="at">level =</span> <span class="dv">10</span> <span class="sc">*</span> p6_density)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Richness</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>comm_p6 <span class="sc">%&gt;%</span> </span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">div_richness</span>(<span class="at">level =</span> <span class="fu">round</span>(<span class="dv">10</span> <span class="sc">*</span> p6_density))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 6
   site          weight estimator order level diversity
   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;
-1 metacommunity   6.25 jackknife     0 5666.      383.</code></pre>
+1 metacommunity   6.25 jackknife     0  5666      383.</code></pre>
 </div>
 </div>
 </section>
 </section>
-<section id="shannon" class="level2">
-<h2 class="anchored" data-anchor-id="shannon">Shannon</h2>
-<section id="information-function" class="level3">
-<h3 class="anchored" data-anchor-id="information-function">Information function</h3>
+<section id="shannon" class="level2" data-number="0.5">
+<h2 data-number="0.5" class="anchored" data-anchor-id="shannon"><span class="header-section-number">0.5</span> Shannon</h2>
+<section id="information-function" class="level3" data-number="0.5.1">
+<h3 data-number="0.5.1" class="anchored" data-anchor-id="information-function"><span class="header-section-number">0.5.1</span> Information function</h3>
+<p>Information brought by an individual: <span class="math inline">\(I(p_s) = \ln(1 / p_s)\)</span></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_function</span>(<span class="at">fun =</span> \(p) {<span class="fu">log</span>(<span class="dv">1</span> <span class="sc">/</span> p)})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Increase the default number of points (101 to 1001) for precision</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_function</span>(<span class="at">fun =</span> \(p) {<span class="fu">log</span>(<span class="dv">1</span> <span class="sc">/</span> p)}, <span class="at">n =</span> <span class="dv">1001</span>) <span class="sc">+</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Probability"</span>, <span class="at">y =</span> <span class="st">"Information"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1208,11 +623,11 @@ arrondi à 567</code></pre>
 </div>
 </div>
 </div>
-<p>Species information.</p>
-<p>Information function.</p>
+<p>Information brought by a species: <span class="math inline">\(p_s \ln(1 / p_s)\)</span></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_function</span>(<span class="at">fun =</span> \(p) {p <span class="sc">*</span> <span class="fu">log</span>(<span class="dv">1</span> <span class="sc">/</span> p)})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_function</span>(<span class="at">fun =</span> \(p) {p <span class="sc">*</span> <span class="fu">log</span>(<span class="dv">1</span> <span class="sc">/</span> p)}, <span class="at">n =</span> <span class="dv">1001</span>) <span class="sc">+</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Probability"</span>, <span class="at">y =</span> <span class="st">"Information"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Removed 1 row containing missing values or values outside the scale range
 (`geom_function()`).</code></pre>
@@ -1226,13 +641,15 @@ arrondi à 567</code></pre>
 </div>
 </div>
 </section>
-<section id="paracou-6-1" class="level3">
-<h3 class="anchored" data-anchor-id="paracou-6-1">Paracou 6</h3>
+<section id="paracou-6-1" class="level3" data-number="0.5.2">
+<h3 data-number="0.5.2" class="anchored" data-anchor-id="paracou-6-1"><span class="header-section-number">0.5.2</span> Paracou 6</h3>
 <p>Estimators.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ent_shannon</span>(comm_p6, <span class="at">estimator =</span> <span class="st">"naive"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">ent_shannon</span>(comm_p6, <span class="at">estimator =</span> <span class="st">"UnveilJ"</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">ent_shannon</span>(comm_p6, <span class="at">estimator =</span> <span class="st">"ChaoJost"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ent_shannon</span>(comm_p6, <span class="at">estimator =</span> <span class="st">"naive"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">ent_shannon</span>(comm_p6, <span class="at">estimator =</span> <span class="st">"UnveilJ"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">ent_shannon</span>(comm_p6, <span class="at">estimator =</span> <span class="st">"ChaoJost"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>() <span class="ot">-&gt;</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  paracou_6_shannon</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3 × 5
   site          weight estimator order entropy
@@ -1242,24 +659,193 @@ arrondi à 567</code></pre>
 3 metacommunity   6.25 ChaoJost      1    4.68</code></pre>
 </div>
 </div>
-<p>Hill numbers.</p>
+<p>Effective number of species: <span class="math inline">\(e^H\)</span>.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">div_hill</span>(comm_p6, <span class="at">q =</span> <span class="dv">1</span>, <span class="at">estimator =</span> <span class="st">"naive"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">div_hill</span>(comm_p6, <span class="at">q =</span> <span class="dv">1</span>, <span class="at">estimator =</span> <span class="st">"UnveilJ"</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">div_hill</span>(comm_p6, <span class="at">q =</span> <span class="dv">1</span>, <span class="at">estimator =</span> <span class="st">"ChaoJost"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>paracou_6_shannon <span class="sc">%&gt;%</span> </span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">diversity =</span> <span class="fu">exp</span>(entropy))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 3 × 5
+<pre><code># A tibble: 3 × 6
+  site          weight estimator order entropy diversity
+  &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;
+1 metacommunity   6.25 naive         1    4.62      101.
+2 metacommunity   6.25 UnveilJ       1    4.71      111.
+3 metacommunity   6.25 ChaoJost      1    4.68      108.</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="simpson" class="level2" data-number="0.6">
+<h2 data-number="0.6" class="anchored" data-anchor-id="simpson"><span class="header-section-number">0.6</span> Simpson</h2>
+<section id="paracou-6-2" class="level3" data-number="0.6.1">
+<h3 data-number="0.6.1" class="anchored" data-anchor-id="paracou-6-2"><span class="header-section-number">0.6.1</span> Paracou 6</h3>
+<p>Estimators.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ent_simpson</span>(comm_p6, <span class="at">estimator =</span> <span class="st">"naive"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">ent_simpson</span>(comm_p6, <span class="at">estimator =</span> <span class="st">"Lande"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">ent_simpson</span>(comm_p6, <span class="at">estimator =</span> <span class="st">"UnveilJ"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">ent_simpson</span>(comm_p6, <span class="at">estimator =</span> <span class="st">"ChaoJost"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>() <span class="ot">-&gt;</span></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  paracou_6_simpson</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 5
+  site          weight estimator order entropy
+  &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+1 metacommunity   6.25 naive         2   0.978
+2 metacommunity   6.25 Lande         2   0.979
+3 metacommunity   6.25 UnveilJ       2   0.979
+4 metacommunity   6.25 ChaoJost      2   0.979</code></pre>
+</div>
+</div>
+<p>Effective number of species: <span class="math inline">\(1 / (1 - E)\)</span>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>paracou_6_simpson <span class="sc">%&gt;%</span> </span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">diversity =</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> entropy))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 6
+  site          weight estimator order entropy diversity
+  &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;
+1 metacommunity   6.25 naive         2   0.978      45.9
+2 metacommunity   6.25 Lande         2   0.979      46.5
+3 metacommunity   6.25 UnveilJ       2   0.979      46.5
+4 metacommunity   6.25 ChaoJost      2   0.979      46.5</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="generalised-entropy" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Generalised entropy</h1>
+<p>Information brought by an individual: <span class="math inline">\(I(p_s) = \ln_q(1 / p_s)\)</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Increase the default number of points (101 to 1001) for precision</span></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_function</span>(<span class="at">fun =</span> \(p) {<span class="fu">ln_q</span>(<span class="dv">1</span> <span class="sc">/</span> p, <span class="at">q =</span> <span class="dv">0</span>)}, <span class="at">n =</span> <span class="dv">1001</span>, <span class="fu">aes</span>(<span class="at">colour =</span> <span class="st">"0"</span>)) <span class="sc">+</span> </span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_function</span>(<span class="at">fun =</span> \(p) {<span class="fu">ln_q</span>(<span class="dv">1</span> <span class="sc">/</span> p, <span class="at">q =</span> <span class="dv">1</span>)}, <span class="at">n =</span> <span class="dv">1001</span>, <span class="fu">aes</span>(<span class="at">colour =</span> <span class="st">"1"</span>)) <span class="sc">+</span> </span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_function</span>(<span class="at">fun =</span> \(p) {<span class="fu">ln_q</span>(<span class="dv">1</span> <span class="sc">/</span> p, <span class="at">q =</span> <span class="dv">2</span>)}, <span class="at">n =</span> <span class="dv">1001</span>, <span class="fu">aes</span>(<span class="at">colour =</span> <span class="st">"2"</span>)) <span class="sc">+</span></span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">10</span>)) <span class="sc">+</span></span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Probability"</span>, <span class="at">y =</span> <span class="st">"Information"</span>, <span class="at">colour =</span> <span class="st">"q"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Information brought by a species: <span class="math inline">\(p_s \ln_q(1 / p_s)\)</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Increase the default number of points (101 to 1001) for precision</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_function</span>(<span class="at">fun =</span> \(p) {p <span class="sc">*</span> <span class="fu">ln_q</span>(<span class="dv">1</span> <span class="sc">/</span> p, <span class="at">q =</span> <span class="dv">0</span>)}, <span class="at">n =</span> <span class="dv">1001</span>, <span class="fu">aes</span>(<span class="at">colour =</span> <span class="st">"0"</span>)) <span class="sc">+</span> </span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_function</span>(<span class="at">fun =</span> \(p) {p <span class="sc">*</span> <span class="fu">ln_q</span>(<span class="dv">1</span> <span class="sc">/</span> p, <span class="at">q =</span> <span class="dv">1</span>)}, <span class="at">n =</span> <span class="dv">1001</span>, <span class="fu">aes</span>(<span class="at">colour =</span> <span class="st">"1"</span>)) <span class="sc">+</span> </span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_function</span>(<span class="at">fun =</span> \(p) {p <span class="sc">*</span> <span class="fu">ln_q</span>(<span class="dv">1</span> <span class="sc">/</span> p, <span class="at">q =</span> <span class="dv">2</span>)}, <span class="at">n =</span> <span class="dv">1001</span>, <span class="fu">aes</span>(<span class="at">colour =</span> <span class="st">"2"</span>)) <span class="sc">+</span></span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Probability"</span>, <span class="at">y =</span> <span class="st">"Information"</span>, <span class="at">colour  =</span> <span class="st">"q"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 1 row containing missing values or values outside the scale range
+(`geom_function()`).
+Removed 1 row containing missing values or values outside the scale range
+(`geom_function()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="paracou-6-3" class="level3" data-number="1.0.1">
+<h3 data-number="1.0.1" class="anchored" data-anchor-id="paracou-6-3"><span class="header-section-number">1.0.1</span> Paracou 6</h3>
+<p>Diversity profile</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>comm_p6 <span class="sc">%&gt;%</span> </span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">profile_hill</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>() <span class="sc">+</span></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Don't print the legend</span></span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Compare estimators:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>comm_p6 <span class="sc">%&gt;%</span> </span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">profile_hill</span>(<span class="at">estimator =</span> <span class="st">"UnveilJ"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">site =</span> <span class="st">"UnveilJ"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(</span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>    comm_p6 <span class="sc">%&gt;%</span> </span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">profile_hill</span>(<span class="at">estimator =</span> <span class="st">"ChaoJost"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">site =</span> <span class="st">"ChaoJost"</span>)</span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(</span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>    comm_p6 <span class="sc">%&gt;%</span> </span>
+<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">profile_hill</span>(<span class="at">estimator =</span> <span class="st">"naive"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">site =</span> <span class="st">"naive"</span>)</span>
+<span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>() <span class="sc">+</span></span>
+<span id="cb51-15"><a href="#cb51-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">colour  =</span> <span class="st">"Estimator"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Compare Paracou and BCI, extend <span class="math inline">\(q\)</span>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>comm_p6 <span class="sc">%&gt;%</span> </span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">profile_hill</span>(<span class="at">orders =</span> <span class="fu">seq</span>(<span class="at">from =</span> <span class="dv">0</span>, <span class="at">to =</span> <span class="dv">4</span>, <span class="at">by =</span> <span class="fl">0.1</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">site =</span> <span class="st">"Paracou"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(</span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>    BCI_all <span class="sc">%&gt;%</span> </span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">profile_hill</span>(<span class="at">orders =</span> <span class="fu">seq</span>(<span class="at">from =</span> <span class="dv">0</span>, <span class="at">to =</span> <span class="dv">4</span>, <span class="at">by =</span> <span class="fl">0.1</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">site =</span> <span class="st">"BCI"</span>)</span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Extreme values.</p>
+<p>The reciprocal of the Berger-Parker index <span class="citation" data-cites="Berger1970">(<a href="#ref-Berger1970" role="doc-biblioref">Berger and Parker 1970</a>)</span> is the rarity of the most abundant species <span class="math inline">\(^{+\infty}D\)</span>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># q = 1000 is enough for infinity</span></span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="fu">div_hill</span>(comm_p6, <span class="at">q =</span> <span class="dv">1000</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 5
   site          weight estimator order diversity
   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;     &lt;dbl&gt;
-1 metacommunity   6.25 naive         1      101.
-2 metacommunity   6.25 UnveilJ       1      111.
-3 metacommunity   6.25 ChaoJost      1      108.</code></pre>
+1 metacommunity   6.25 UnveilJ    1000      13.3</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare to </span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>comm_p6 <span class="sc">%&gt;%</span> </span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Extract proobabilities</span></span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_probabilities</span>(<span class="at">as_numeric =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Max value</span></span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">max</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Reciprocal</span></span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">^</span><span class="st">`</span>(<span class="sc">-</span><span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 13.31203</code></pre>
 </div>
 </div>
+
 </section>
 </section>
 
-</main>
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-Berger1970" class="csl-entry" role="listitem">
+Berger, Wolfgang H., and Frances L. Parker. 1970. <span>“Diversity of Planktonic Foraminifera in Deep-Sea Sediments.”</span> <em>Science</em> 168 (3937): 1345–47. <a href="https://doi.org/10.1126/science.168.3937.1345">https://doi.org/10.1126/science.168.3937.1345</a>.
+</div>
+</div></section></div></main>
 <!-- /main column -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
