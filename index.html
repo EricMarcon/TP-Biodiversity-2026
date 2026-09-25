@@ -384,7 +384,7 @@ window.Quarto = {
   site                mu sigma
   &lt;chr&gt;            &lt;dbl&gt; &lt;dbl&gt;
 1 Large log-normal 15.3   1.01
-2 Small log-normal  1.87  1.01</code></pre>
+2 Small log-normal  1.83  1.03</code></pre>
 </div>
 </div>
 </section>
@@ -533,9 +533,12 @@ window.Quarto = {
 <p>Prepare the data: gather the four subplots.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>paracou_6_abd <span class="sc">%&gt;%</span> </span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">metacommunity</span>() <span class="ot">-&gt;</span></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  comm_p6</span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(comm_p6)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Gather all sites</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">metacommunity</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Rename "matacommunity"</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">site =</span> <span class="st">"Paracou 6"</span>) <span class="ot">-&gt;</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  p6_abundances</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(p6_abundances)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -546,7 +549,7 @@ window.Quarto = {
 </div>
 <p>Abundance frequencies.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>comm_p6 <span class="sc">%&gt;%</span> </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>p6_abundances <span class="sc">%&gt;%</span> </span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.numeric</span>() <span class="sc">%&gt;%</span> </span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">abd_freq_count</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -568,21 +571,21 @@ window.Quarto = {
 </div>
 <p>Estimators of richness.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">div_richness</span>(comm_p6, <span class="at">estimator =</span> <span class="st">"naive"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">div_richness</span>(comm_p6, <span class="at">estimator =</span> <span class="st">"Chao1"</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">div_richness</span>(comm_p6, <span class="at">estimator =</span> <span class="st">"iChao"</span>)) <span class="sc">%&gt;%</span> </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">div_richness</span>(p6_abundances, <span class="at">estimator =</span> <span class="st">"naive"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">div_richness</span>(p6_abundances, <span class="at">estimator =</span> <span class="st">"Chao1"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">div_richness</span>(p6_abundances, <span class="at">estimator =</span> <span class="st">"iChao"</span>)) <span class="sc">%&gt;%</span> </span>
 <span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Default estimator</span></span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">div_richness</span>(comm_p6, <span class="at">estimator =</span> <span class="st">"jackknife"</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">div_richness</span>(comm_p6, <span class="at">estimator =</span> <span class="st">"jackknife"</span>, <span class="at">jack_max =</span> <span class="dv">1</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">div_richness</span>(p6_abundances, <span class="at">estimator =</span> <span class="st">"jackknife"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">div_richness</span>(p6_abundances, <span class="at">estimator =</span> <span class="st">"jackknife"</span>, <span class="at">jack_max =</span> <span class="dv">1</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 5
-  site          weight estimator   order diversity
-  &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt;
-1 metacommunity   6.25 naive           0      335 
-2 metacommunity   6.25 Chao1           0      418.
-3 metacommunity   6.25 iChao1          0      438.
-4 metacommunity   6.25 Jackknife 2     0      473 
-5 metacommunity   6.25 Jackknife 1     0      433 </code></pre>
+  site      weight estimator   order diversity
+  &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt;
+1 Paracou 6   6.25 naive           0      335 
+2 Paracou 6   6.25 Chao1           0      418.
+3 Paracou 6   6.25 iChao1          0      438.
+4 Paracou 6   6.25 Jackknife 2     0      473 
+5 Paracou 6   6.25 Jackknife 1     0      433 </code></pre>
 </div>
 </div>
 </section>
@@ -591,27 +594,27 @@ window.Quarto = {
 <p>Diversity of 1 ha in Paracou.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Number of trees per hectare</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>p6_density <span class="ot">&lt;-</span> <span class="fu">abd_sum</span>(comm_p6, <span class="at">as_numeric =</span> <span class="cn">TRUE</span>) <span class="sc">/</span> <span class="fl">6.25</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>p6_density <span class="ot">&lt;-</span> <span class="fu">abd_sum</span>(p6_abundances, <span class="at">as_numeric =</span> <span class="cn">TRUE</span>) <span class="sc">/</span> <span class="fl">6.25</span></span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Richness</span></span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>comm_p6 <span class="sc">%&gt;%</span> </span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>p6_abundances <span class="sc">%&gt;%</span> </span>
 <span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">div_richness</span>(<span class="at">level =</span> <span class="fu">round</span>(p6_density))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 6
-  site          weight estimator order level diversity
-  &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;
-1 metacommunity   6.25 SAC           0   567      159.</code></pre>
+  site      weight estimator order level diversity
+  &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;
+1 Paracou 6   6.25 SAC           0   567      159.</code></pre>
 </div>
 </div>
 <p>Diversity of 10 ha in Paracou.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Richness</span></span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>comm_p6 <span class="sc">%&gt;%</span> </span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>p6_abundances <span class="sc">%&gt;%</span> </span>
 <span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">div_richness</span>(<span class="at">level =</span> <span class="fu">round</span>(<span class="dv">10</span> <span class="sc">*</span> p6_density))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 6
-  site          weight estimator order level diversity
-  &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;
-1 metacommunity   6.25 jackknife     0  5666      383.</code></pre>
+  site      weight estimator order level diversity
+  &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;
+1 Paracou 6   6.25 jackknife     0  5666      383.</code></pre>
 </div>
 </div>
 </section>
@@ -656,31 +659,31 @@ window.Quarto = {
 <h3 data-number="5.1.1" class="anchored" data-anchor-id="paracou-6-1"><span class="header-section-number">5.1.1</span> Paracou 6</h3>
 <p>Estimators.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ent_shannon</span>(comm_p6, <span class="at">estimator =</span> <span class="st">"naive"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">ent_shannon</span>(comm_p6, <span class="at">estimator =</span> <span class="st">"UnveilJ"</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">ent_shannon</span>(comm_p6, <span class="at">estimator =</span> <span class="st">"ChaoJost"</span>)) <span class="sc">%&gt;%</span> </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ent_shannon</span>(p6_abundances, <span class="at">estimator =</span> <span class="st">"naive"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">ent_shannon</span>(p6_abundances, <span class="at">estimator =</span> <span class="st">"UnveilJ"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">ent_shannon</span>(p6_abundances, <span class="at">estimator =</span> <span class="st">"ChaoJost"</span>)) <span class="sc">%&gt;%</span> </span>
 <span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>() <span class="ot">-&gt;</span></span>
-<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  paracou_6_shannon</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  p6_shannon</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3 × 5
-  site          weight estimator order entropy
-  &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt;
-1 metacommunity   6.25 naive         1    4.62
-2 metacommunity   6.25 UnveilJ       1    4.71
-3 metacommunity   6.25 ChaoJost      1    4.68</code></pre>
+  site      weight estimator order entropy
+  &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+1 Paracou 6   6.25 naive         1    4.62
+2 Paracou 6   6.25 UnveilJ       1    4.71
+3 Paracou 6   6.25 ChaoJost      1    4.68</code></pre>
 </div>
 </div>
 <p>Effective number of species: <span class="math inline">\(e^H\)</span>.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>paracou_6_shannon <span class="sc">%&gt;%</span> </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>p6_shannon <span class="sc">%&gt;%</span> </span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">diversity =</span> <span class="fu">exp</span>(entropy))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3 × 6
-  site          weight estimator order entropy diversity
-  &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;
-1 metacommunity   6.25 naive         1    4.62      101.
-2 metacommunity   6.25 UnveilJ       1    4.71      111.
-3 metacommunity   6.25 ChaoJost      1    4.68      108.</code></pre>
+  site      weight estimator order entropy diversity
+  &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;
+1 Paracou 6   6.25 naive         1    4.62      101.
+2 Paracou 6   6.25 UnveilJ       1    4.71      111.
+3 Paracou 6   6.25 ChaoJost      1    4.68      108.</code></pre>
 </div>
 </div>
 </section>
@@ -692,34 +695,34 @@ window.Quarto = {
 <h2 data-number="6.1" class="anchored" data-anchor-id="paracou-6-2"><span class="header-section-number">6.1</span> Paracou 6</h2>
 <p>Estimators.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ent_simpson</span>(comm_p6, <span class="at">estimator =</span> <span class="st">"naive"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">ent_simpson</span>(comm_p6, <span class="at">estimator =</span> <span class="st">"Lande"</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">ent_simpson</span>(comm_p6, <span class="at">estimator =</span> <span class="st">"UnveilJ"</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">ent_simpson</span>(comm_p6, <span class="at">estimator =</span> <span class="st">"ChaoJost"</span>)) <span class="sc">%&gt;%</span> </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ent_simpson</span>(p6_abundances, <span class="at">estimator =</span> <span class="st">"naive"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">ent_simpson</span>(p6_abundances, <span class="at">estimator =</span> <span class="st">"Lande"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">ent_simpson</span>(p6_abundances, <span class="at">estimator =</span> <span class="st">"UnveilJ"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">ent_simpson</span>(p6_abundances, <span class="at">estimator =</span> <span class="st">"ChaoJost"</span>)) <span class="sc">%&gt;%</span> </span>
 <span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>() <span class="ot">-&gt;</span></span>
-<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  paracou_6_simpson</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  p6_simpson</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 4 × 5
-  site          weight estimator order entropy
-  &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt;
-1 metacommunity   6.25 naive         2   0.978
-2 metacommunity   6.25 Lande         2   0.979
-3 metacommunity   6.25 UnveilJ       2   0.979
-4 metacommunity   6.25 ChaoJost      2   0.979</code></pre>
+  site      weight estimator order entropy
+  &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+1 Paracou 6   6.25 naive         2   0.978
+2 Paracou 6   6.25 Lande         2   0.979
+3 Paracou 6   6.25 UnveilJ       2   0.979
+4 Paracou 6   6.25 ChaoJost      2   0.979</code></pre>
 </div>
 </div>
 <p>Effective number of species: <span class="math inline">\(1 / (1 - E)\)</span>.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>paracou_6_simpson <span class="sc">%&gt;%</span> </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>p6_simpson <span class="sc">%&gt;%</span> </span>
 <span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">diversity =</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> entropy))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 4 × 6
-  site          weight estimator order entropy diversity
-  &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;
-1 metacommunity   6.25 naive         2   0.978      45.9
-2 metacommunity   6.25 Lande         2   0.979      46.5
-3 metacommunity   6.25 UnveilJ       2   0.979      46.5
-4 metacommunity   6.25 ChaoJost      2   0.979      46.5</code></pre>
+  site      weight estimator order entropy diversity
+  &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;
+1 Paracou 6   6.25 naive         2   0.978      45.9
+2 Paracou 6   6.25 Lande         2   0.979      46.5
+3 Paracou 6   6.25 UnveilJ       2   0.979      46.5
+4 Paracou 6   6.25 ChaoJost      2   0.979      46.5</code></pre>
 </div>
 </div>
 </section>
@@ -732,11 +735,11 @@ window.Quarto = {
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
 <span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Increase the default number of points (101 to 1001) for precision</span></span>
-<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_function</span>(<span class="at">fun =</span> \(p) {<span class="fu">ln_q</span>(<span class="dv">1</span> <span class="sc">/</span> p, <span class="at">q =</span> <span class="dv">0</span>)}, <span class="at">n =</span> <span class="dv">1001</span>, <span class="fu">aes</span>(<span class="at">colour =</span> <span class="st">"0"</span>)) <span class="sc">+</span> </span>
-<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_function</span>(<span class="at">fun =</span> \(p) {<span class="fu">ln_q</span>(<span class="dv">1</span> <span class="sc">/</span> p, <span class="at">q =</span> <span class="dv">1</span>)}, <span class="at">n =</span> <span class="dv">1001</span>, <span class="fu">aes</span>(<span class="at">colour =</span> <span class="st">"1"</span>)) <span class="sc">+</span> </span>
-<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_function</span>(<span class="at">fun =</span> \(p) {<span class="fu">ln_q</span>(<span class="dv">1</span> <span class="sc">/</span> p, <span class="at">q =</span> <span class="dv">2</span>)}, <span class="at">n =</span> <span class="dv">1001</span>, <span class="fu">aes</span>(<span class="at">colour =</span> <span class="st">"2"</span>)) <span class="sc">+</span></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_function</span>(<span class="at">fun =</span> \(p) {<span class="fu">ln_q</span>(<span class="dv">1</span> <span class="sc">/</span> p, <span class="at">q =</span> <span class="dv">0</span>)}, <span class="at">n =</span> <span class="dv">1001</span>, <span class="fu">aes</span>(<span class="at">color =</span> <span class="st">"0"</span>)) <span class="sc">+</span> </span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_function</span>(<span class="at">fun =</span> \(p) {<span class="fu">ln_q</span>(<span class="dv">1</span> <span class="sc">/</span> p, <span class="at">q =</span> <span class="dv">1</span>)}, <span class="at">n =</span> <span class="dv">1001</span>, <span class="fu">aes</span>(<span class="at">color =</span> <span class="st">"1"</span>)) <span class="sc">+</span> </span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_function</span>(<span class="at">fun =</span> \(p) {<span class="fu">ln_q</span>(<span class="dv">1</span> <span class="sc">/</span> p, <span class="at">q =</span> <span class="dv">2</span>)}, <span class="at">n =</span> <span class="dv">1001</span>, <span class="fu">aes</span>(<span class="at">color =</span> <span class="st">"2"</span>)) <span class="sc">+</span></span>
 <span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">10</span>)) <span class="sc">+</span></span>
-<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Probability"</span>, <span class="at">y =</span> <span class="st">"Information"</span>, <span class="at">colour =</span> <span class="st">"q"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Probability"</span>, <span class="at">y =</span> <span class="st">"Information"</span>, <span class="at">color =</span> <span class="st">"q"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -749,10 +752,10 @@ window.Quarto = {
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
 <span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Increase the default number of points (101 to 1001) for precision</span></span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_function</span>(<span class="at">fun =</span> \(p) {p <span class="sc">*</span> <span class="fu">ln_q</span>(<span class="dv">1</span> <span class="sc">/</span> p, <span class="at">q =</span> <span class="dv">0</span>)}, <span class="at">n =</span> <span class="dv">1001</span>, <span class="fu">aes</span>(<span class="at">colour =</span> <span class="st">"0"</span>)) <span class="sc">+</span> </span>
-<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_function</span>(<span class="at">fun =</span> \(p) {p <span class="sc">*</span> <span class="fu">ln_q</span>(<span class="dv">1</span> <span class="sc">/</span> p, <span class="at">q =</span> <span class="dv">1</span>)}, <span class="at">n =</span> <span class="dv">1001</span>, <span class="fu">aes</span>(<span class="at">colour =</span> <span class="st">"1"</span>)) <span class="sc">+</span> </span>
-<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_function</span>(<span class="at">fun =</span> \(p) {p <span class="sc">*</span> <span class="fu">ln_q</span>(<span class="dv">1</span> <span class="sc">/</span> p, <span class="at">q =</span> <span class="dv">2</span>)}, <span class="at">n =</span> <span class="dv">1001</span>, <span class="fu">aes</span>(<span class="at">colour =</span> <span class="st">"2"</span>)) <span class="sc">+</span></span>
-<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Probability"</span>, <span class="at">y =</span> <span class="st">"Information"</span>, <span class="at">colour  =</span> <span class="st">"q"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_function</span>(<span class="at">fun =</span> \(p) {p <span class="sc">*</span> <span class="fu">ln_q</span>(<span class="dv">1</span> <span class="sc">/</span> p, <span class="at">q =</span> <span class="dv">0</span>)}, <span class="at">n =</span> <span class="dv">1001</span>, <span class="fu">aes</span>(<span class="at">color =</span> <span class="st">"0"</span>)) <span class="sc">+</span> </span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_function</span>(<span class="at">fun =</span> \(p) {p <span class="sc">*</span> <span class="fu">ln_q</span>(<span class="dv">1</span> <span class="sc">/</span> p, <span class="at">q =</span> <span class="dv">1</span>)}, <span class="at">n =</span> <span class="dv">1001</span>, <span class="fu">aes</span>(<span class="at">color =</span> <span class="st">"1"</span>)) <span class="sc">+</span> </span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_function</span>(<span class="at">fun =</span> \(p) {p <span class="sc">*</span> <span class="fu">ln_q</span>(<span class="dv">1</span> <span class="sc">/</span> p, <span class="at">q =</span> <span class="dv">2</span>)}, <span class="at">n =</span> <span class="dv">1001</span>, <span class="fu">aes</span>(<span class="at">color =</span> <span class="st">"2"</span>)) <span class="sc">+</span></span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Probability"</span>, <span class="at">y =</span> <span class="st">"Information"</span>, <span class="at">color  =</span> <span class="st">"q"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Removed 1 row containing missing values or values outside the scale range
 (`geom_function()`).
@@ -772,7 +775,7 @@ Removed 1 row containing missing values or values outside the scale range
 <h2 data-number="7.2" class="anchored" data-anchor-id="paracou-6-3"><span class="header-section-number">7.2</span> Paracou 6</h2>
 <p>Diversity profile.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>comm_p6 <span class="sc">%&gt;%</span> </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>p6_abundances <span class="sc">%&gt;%</span> </span>
 <span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">profile_hill</span>() <span class="sc">%&gt;%</span> </span>
 <span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>() <span class="sc">+</span></span>
 <span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Don't print the legend</span></span>
@@ -787,21 +790,22 @@ Removed 1 row containing missing values or values outside the scale range
 </div>
 <p>Compare estimators.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>comm_p6 <span class="sc">%&gt;%</span> </span>
-<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">profile_hill</span>(<span class="at">estimator =</span> <span class="st">"UnveilJ"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">site =</span> <span class="st">"UnveilJ"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(</span>
-<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>    comm_p6 <span class="sc">%&gt;%</span> </span>
-<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">profile_hill</span>(<span class="at">estimator =</span> <span class="st">"ChaoJost"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">site =</span> <span class="st">"ChaoJost"</span>)</span>
-<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(</span>
-<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>    comm_p6 <span class="sc">%&gt;%</span> </span>
-<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">profile_hill</span>(<span class="at">estimator =</span> <span class="st">"naive"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">site =</span> <span class="st">"naive"</span>)</span>
-<span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>() <span class="sc">+</span></span>
-<span id="cb51-15"><a href="#cb51-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">colour  =</span> <span class="st">"Estimator"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>p6_abundances <span class="sc">%&gt;%</span> </span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">profile_hill</span>(<span class="at">estimator =</span> <span class="st">"UnveilJ"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Use the site name to store the estimator's name</span></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">site =</span> <span class="st">"UnveilJ"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>    p6_abundances <span class="sc">%&gt;%</span> </span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">profile_hill</span>(<span class="at">estimator =</span> <span class="st">"ChaoJost"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">site =</span> <span class="st">"ChaoJost"</span>)</span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(</span>
+<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>    p6_abundances <span class="sc">%&gt;%</span> </span>
+<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">profile_hill</span>(<span class="at">estimator =</span> <span class="st">"naive"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">site =</span> <span class="st">"naive"</span>)</span>
+<span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb51-15"><a href="#cb51-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>() <span class="sc">+</span></span>
+<span id="cb51-16"><a href="#cb51-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">color  =</span> <span class="st">"Estimator"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -814,15 +818,15 @@ Removed 1 row containing missing values or values outside the scale range
 <p>The reciprocal of the Berger-Parker index <span class="citation" data-cites="Berger1970">(<a href="#ref-Berger1970" role="doc-biblioref">Berger and Parker 1970</a>)</span> is the rarity of the most abundant species <span class="math inline">\(^{+\infty}D\)</span>.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># q = 1000 is enough for infinity</span></span>
-<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="fu">div_hill</span>(comm_p6, <span class="at">q =</span> <span class="dv">1000</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="fu">div_hill</span>(p6_abundances, <span class="at">q =</span> <span class="dv">1000</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 5
-  site          weight estimator order diversity
-  &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;     &lt;dbl&gt;
-1 metacommunity   6.25 UnveilJ    1000      13.3</code></pre>
+  site      weight estimator order diversity
+  &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+1 Paracou 6   6.25 UnveilJ    1000      13.3</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare to </span></span>
-<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>comm_p6 <span class="sc">%&gt;%</span> </span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>p6_abundances <span class="sc">%&gt;%</span> </span>
 <span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Extract proobabilities</span></span>
 <span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_probabilities</span>(<span class="at">as_numeric =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Max value</span></span>
@@ -841,15 +845,11 @@ Removed 1 row containing missing values or values outside the scale range
 <h2 data-number="8.1" class="anchored" data-anchor-id="asymptotic-diversity"><span class="header-section-number">8.1</span> Asymptotic diversity</h2>
 <p>Compare asymptotic diversity of Paracou and BCI, extend <span class="math inline">\(q\)</span>.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>comm_p6 <span class="sc">%&gt;%</span> </span>
-<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">profile_hill</span>(<span class="at">orders =</span> <span class="fu">seq</span>(<span class="at">from =</span> <span class="dv">0</span>, <span class="at">to =</span> <span class="dv">4</span>, <span class="at">by =</span> <span class="fl">0.1</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">site =</span> <span class="st">"Paracou"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(</span>
-<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>    BCI_all <span class="sc">%&gt;%</span> </span>
-<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">profile_hill</span>(<span class="at">orders =</span> <span class="fu">seq</span>(<span class="at">from =</span> <span class="dv">0</span>, <span class="at">to =</span> <span class="dv">4</span>, <span class="at">by =</span> <span class="fl">0.1</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">site =</span> <span class="st">"BCI"</span>)</span>
-<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Orders from 0 to 4</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>q_seq_0_4 <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="at">from =</span> <span class="dv">0</span>, <span class="at">to =</span> <span class="dv">4</span>, <span class="at">by =</span> <span class="fl">0.1</span>)</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a><span class="fu">profile_hill</span>(p6_abundances, <span class="at">orders =</span> q_seq_0_4) <span class="sc">%&gt;%</span> </span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">profile_hill</span>(BCI_all, <span class="at">orders =</span> q_seq_0_4)) <span class="sc">%&gt;%</span> </span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -865,20 +865,14 @@ Removed 1 row containing missing values or values outside the scale range
 <p>Compare diversity at the same sampling effort, say 10 ha.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Number of trees in 10 ha</span></span>
-<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>p6_n_10ha <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">abd_sum</span>(comm_p6, <span class="at">as_numeric =</span> <span class="cn">TRUE</span>) <span class="sc">/</span> <span class="fl">6.25</span> <span class="sc">*</span> <span class="dv">10</span>)</span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>p6_n_10ha <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">abd_sum</span>(p6_abundances, <span class="at">as_numeric =</span> <span class="cn">TRUE</span>) <span class="sc">/</span> <span class="fl">6.25</span> <span class="sc">*</span> <span class="dv">10</span>)</span>
 <span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>BCI_n_10_ha <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">sum</span>(BCI_all) <span class="sc">/</span> <span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Compare diversity of 10 ha.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>comm_p6 <span class="sc">%&gt;%</span> </span>
-<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">profile_hill</span>(<span class="at">level =</span> p6_n_10ha) <span class="sc">%&gt;%</span> </span>
-<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">site =</span> <span class="st">"Paracou"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(</span>
-<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>    BCI_all <span class="sc">%&gt;%</span> </span>
-<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">profile_hill</span>(<span class="at">level =</span> BCI_n_10_ha) <span class="sc">%&gt;%</span> </span>
-<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">site =</span> <span class="st">"BCI"</span>)</span>
-<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb58-9"><a href="#cb58-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">profile_hill</span>(p6_abundances, <span class="at">level =</span> p6_n_10ha) <span class="sc">%&gt;%</span> </span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">profile_hill</span>(BCI_all, <span class="at">level =</span> BCI_n_10_ha)) <span class="sc">%&gt;%</span> </span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -891,28 +885,22 @@ Removed 1 row containing missing values or values outside the scale range
 <section id="sample-coverage" class="level2" data-number="8.3">
 <h2 data-number="8.3" class="anchored" data-anchor-id="sample-coverage"><span class="header-section-number">8.3</span> Sample coverage</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coverage</span>(comm_p6) <span class="sc">%&gt;%</span> </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coverage</span>(p6_abundances) <span class="sc">%&gt;%</span> </span>
 <span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">coverage</span>(BCI_all))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 4
-  site          weight estimator  coverage
-  &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;         &lt;dbl&gt;
-1 metacommunity   6.25 ZhangHuang    0.972
-2 BCI            50    ZhangHuang    0.999</code></pre>
+  site      weight estimator  coverage
+  &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;         &lt;dbl&gt;
+1 Paracou 6   6.25 ZhangHuang    0.972
+2 BCI        50    ZhangHuang    0.999</code></pre>
 </div>
 </div>
 <p>Compare diversity at the same sample coverage <span class="citation" data-cites="Chao2012b">(<a href="#ref-Chao2012b" role="doc-biblioref">Chao and Jost 2012</a>)</span>, that of Paracou.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>reference_coverage <span class="ot">&lt;-</span> <span class="fu">coverage</span>(comm_p6, <span class="at">as_numeric =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>comm_p6 <span class="sc">%&gt;%</span> </span>
-<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">profile_hill</span>(<span class="at">level =</span> reference_coverage) <span class="sc">%&gt;%</span> </span>
-<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">site =</span> <span class="st">"Paracou"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(</span>
-<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a>    BCI_all <span class="sc">%&gt;%</span> </span>
-<span id="cb61-7"><a href="#cb61-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">profile_hill</span>(<span class="at">level =</span> reference_coverage) <span class="sc">%&gt;%</span> </span>
-<span id="cb61-8"><a href="#cb61-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">site =</span> <span class="st">"BCI"</span>)</span>
-<span id="cb61-9"><a href="#cb61-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb61-10"><a href="#cb61-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>reference_coverage <span class="ot">&lt;-</span> <span class="fu">coverage</span>(p6_abundances, <span class="at">as_numeric =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a><span class="fu">profile_hill</span>(p6_abundances, <span class="at">level =</span> reference_coverage) <span class="sc">%&gt;%</span> </span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">profile_hill</span>(BCI_all, <span class="at">level =</span> reference_coverage)) <span class="sc">%&gt;%</span> </span>
+<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
