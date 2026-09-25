@@ -17,6 +17,7 @@ execute:
   warning: true
   # Cache code results
   cache: true
+bibliography: references.bib
 ---
 
 ```{r}
@@ -455,4 +456,19 @@ comm_p6 %>%
 ```
 
 Extreme values.
-Berger-Parker index: \$
+
+The reciprocal of the Berger-Parker index [@Berger1970] is the rarity of the most abundant species $^{+\infty}D$.
+
+```{r}
+# q = 1000 is enough for infinity
+div_hill(comm_p6, q = 1000)
+# Compare to 
+comm_p6 %>% 
+  # Extract proobabilities
+  as_probabilities(as_numeric = TRUE) %>% 
+  # Max value
+  max() %>% 
+  # Reciprocal
+  `^`(-1)
+  
+```
