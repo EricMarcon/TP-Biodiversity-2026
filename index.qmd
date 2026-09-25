@@ -516,3 +516,78 @@ profile_hill(p6_abundances, level = reference_coverage) %>%
   bind_rows(profile_hill(BCI_all, level = reference_coverage)) %>% 
   autoplot()
 ```
+
+# Phylogenetic diversity
+
+## Mock data
+
+A simple community with 3 species.
+
+```{r}
+mock_3sp_abd %>% 
+  as_abundances() %>% 
+  mutate(site = "Mock 3 species") %>% 
+  print() ->
+  mock_3sp_abundances
+```
+
+```{r}
+library("ape")
+plot(mock_3sp_tree, direction = "downwards", srt = 90)
+axis(2)
+```
+
+PD is the total length of branches
+
+```{r}
+div_pd(mock_3sp_abd, tree = mock_3sp_tree)
+```
+
+Rao.
+
+```{r}
+ent_rao(mock_3sp_abundances, tree = mock_3sp_tree, estimator = "naive")
+```
+
+The tree is normalized to height = 1 by default.
+Without normalization:
+
+```{r}
+ent_rao(
+  mock_3sp_abundances, 
+  tree = mock_3sp_tree, 
+  estimator = "naive", 
+  normalize = FALSE
+)
+```
+
+## Paracou 6
+
+`paracou_6_taxo` is a taxonomic tree: distance is 1 between species of the same genus, 2 between genera of the same family, 3 between families.
+
+```{r}
+plot(paracou_6_taxo, type = "fan", show.tip.label = FALSE) 
+```
+
+Calculate Rao's entropy and phylogenetic entropy of order 2
+
+```{r}
+ent_rao(p6_abundances, tree = paracou_6_taxo) %>% 
+  bind_rows(
+    ent_phylo(p6_abundances, tree = paracou_6_taxo, q = 2)
+  )
+```
+
+Rao's entropy is not an effective number of species, but the average phylogenetic distance between two individuals.
+The corresponding Hill number is:
+
+```{r}
+div_phylo(p6_abundances, tree = paracou_6_taxo, q = 2)
+```
+
+Diversity profile
+
+```{r}
+profile_phylo(p6_abundances, tree = paracou_6_taxo) %>% 
+  autoplot()
+```
