@@ -749,3 +749,36 @@ profile_similarity(
 ```
 
 Change the variability (0.1 first) and run the code again.
+
+# Diversity partitioning
+
+## Mock data
+
+```{r}
+matrix(
+  c(
+    1, 1, 1, 1, 1, 1, 0, 1, 0, 0,
+    0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
+    0, 0, 0, 0, 0, 0, 0, 1, 1, 1
+  ),
+  nrow = 3, 
+  byrow = TRUE
+) %>% 
+  as_abundances() %>% 
+  mutate(
+    site = paste("Habitat", LETTERS[1:3]),
+    weight = 1
+  ) ->
+  mock_island_abd
+```
+
+Richness.
+
+```{r}
+div_richness(mock_island_abd, estimator = "naive")
+div_richness(mock_island_abd, gamma = TRUE, estimator = "naive")
+```
+
+Multiplicative partitioning: 10 effective species ($\gamma$) = 5 effective species per habitat ($\alpha$) times 2 habitats ($\beta$).
+
+Additive partitioning: 10 effective species ($\gamma$) = 5 effective species per habitat ($\alpha$) + 5 more species ($\beta$).
