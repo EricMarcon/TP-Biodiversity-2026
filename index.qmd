@@ -591,3 +591,148 @@ Diversity profile
 profile_phylo(p6_abundances, tree = paracou_6_taxo) %>% 
   autoplot()
 ```
+
+# Functional diversity
+
+## Mock data
+
+The same mock data is used.
+Distances between species is now assumed to be in the trait space.
+Distances between species.
+
+```{r}
+mock_3sp_dist
+```
+
+Plot the trait space.
+
+```{r}
+library("ade4")
+mock_pcoa <- dudi.pco(mock_3sp_dist, scannf = FALSE)
+scatter(mock_pcoa, posieig = "null")
+```
+
+Similarity between species.
+
+```{r}
+# The dist object must be converted to a matrix
+mock_3sp_Z <- 1 - as.matrix(mock_3sp_dist) / max(mock_3sp_dist)
+mock_3sp_Z
+```
+
+Ordinariness.
+
+```{r}
+# Probabilities of species
+mock_3sp_prob <- mock_3sp_abd / sum(mock_3sp_abd)
+# Ordinariness of species
+mock_3sp_O <- mock_3sp_Z %*% mock_3sp_prob
+# Compare probaiblities and ordinariness
+tibble(
+  Probability = mock_3sp_prob,
+  Rarity_p = 1 / mock_3sp_prob,
+  Ordinariness = mock_3sp_O,
+  Rarity_0 = 1 / mock_3sp_O
+)
+```
+
+Diversity.
+
+```{r}
+profile_similarity(mock_3sp_abundances, mock_3sp_Z) %>% 
+  autoplot()
+```
+
+Diversity of order 2 (i.e. Rao's).
+
+```{r} ent_similarity(mock_3sp_abundances, mock_3sp_Z, q = 2, estimator = "naive")}
+```
+
+## Paracou 6
+
+The species traits are maximum height (95^th^ percentile) and seed mass, maximum height (95^th^ percentile) and seed mass.
+A distance matrix was built (see home practical).
+Distribution of distances between species.
+
+```{r}
+paracou_6_fundist %>% 
+  as.numeric() %>% 
+  tibble(Distance = .) %>% 
+  ggplot() +
+  geom_density(aes(x = Distance))
+```
+
+Diversity profile.
+
+```{r}
+p6_abundances %>% 
+  profile_similarity(
+    similarities = 1 - as.matrix(paracou_6_fundist) / max(paracou_6_fundist)
+  ) %>% 
+  autoplot()
+```
+
+## Intraspecific variability
+
+Coordinates of species A, B and C in the trait space.
+
+```{r}
+mock_pcoa$li
+```
+
+Plot individuals in the trait space, with a small variability.
+
+```{r}
+# Create coordinates
+tibble(
+  Species = rep(names(mock_3sp_abd), times = mock_3sp_abd),
+  x = rep(mock_pcoa$li[, 1], times = mock_3sp_abd),
+  y = rep(mock_pcoa$li[, 2], times = mock_3sp_abd)
+) ->
+  mock_3sp_ind
+# Choose variability
+variability <- 0.1
+# Map
+mock_3sp_ind %>% 
+  # Add variability
+  mutate(
+    x = x + rnorm(n(), mean = 0, sd = variability),
+    y = y + rnorm(n(), mean = 0, sd = variability)
+  ) %>% 
+  ggplot(aes(x = x, y = y, color = Species)) +
+  geom_point() +
+  coord_fixed()
+```
+
+Diversity of the 6 individuals.
+
+```{r}
+# Choose variability
+variability <- 0
+# Create the point set
+mock_3sp_ind %>% 
+  # Add variability
+  mutate(
+    x = x + rnorm(n(), mean = 0, sd = variability),
+    y = y + rnorm(n(), mean = 0, sd = variability)
+  )  %>% 
+  # Distance matrix
+  dist() %>% 
+  as.matrix() ->
+  mock_6ind_dist
+# Total abundance
+mock_6ind_n <- nrow(mock_6ind_dist)
+# Similarity
+mock_6ind_Z <- 1 - mock_6ind_dist / max(mock_6ind_dist)
+colnames(mock_6ind_Z) <- rownames(mock_6ind_Z) <- LETTERS[seq_len(mock_6ind_n)]
+# Abundances of individuals are 1, or any identical value
+mock_6ind_abd <- rep(10, mock_6ind_n)
+names(mock_6ind_abd) <- LETTERS[seq_len(mock_6ind_n)]
+# Diversity
+profile_similarity(
+  mock_6ind_abd, 
+  similarities = mock_6ind_Z,
+  estimator = "naive"
+) %>% 
+  autoplot()
+```
