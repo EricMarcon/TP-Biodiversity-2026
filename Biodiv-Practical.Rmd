@@ -730,7 +730,7 @@ The dissimilarity $\mathbf{Z}$ is calculated as the complement to the normalised
 
 ```{r}
 #| label: Dissimilarites
-Z <- 1 - as.matrix(dist_fun)
+Z <- 1 - as.matrix(dist_fun) / max(dist_fun)
 rownames(Z) <- colnames(Z) <- p6_species
 ```
 
