@@ -609,7 +609,7 @@ Plot the trait space.
 ```{r}
 library("ade4")
 mock_pcoa <- dudi.pco(mock_3sp_dist, scannf = FALSE)
-scatter(mock_pcoa, posieig = "null")
+scatter(mock_pcoa, posieig = "none")
 ```
 
 Similarity between species.
@@ -639,13 +639,23 @@ tibble(
 Diversity.
 
 ```{r}
-profile_similarity(mock_3sp_abundances, mock_3sp_Z) %>% 
+profile_similarity(
+  mock_3sp_abundances, 
+  similarities = mock_3sp_Z, 
+  estimator = "naive"
+) %>% 
   autoplot()
 ```
 
 Diversity of order 2 (i.e. Rao's).
 
-```{r} ent_similarity(mock_3sp_abundances, mock_3sp_Z, q = 2, estimator = "naive")}
+```{r}
+ent_similarity(
+  mock_3sp_abundances, 
+  similarities = mock_3sp_Z, 
+  q = 2, 
+  estimator = "naive"
+)
 ```
 
 ## Paracou 6
@@ -705,6 +715,7 @@ mock_3sp_ind %>%
 ```
 
 Diversity of the 6 individuals.
+First, without variability.
 
 ```{r}
 # Choose variability
@@ -720,14 +731,14 @@ mock_3sp_ind %>%
   dist() %>% 
   as.matrix() ->
   mock_6ind_dist
+# Delete the row and column name of the matrix (they are not species names)
+rownames(mock_6ind_dist) <- colnames(mock_6ind_dist) <- NULL
 # Total abundance
 mock_6ind_n <- nrow(mock_6ind_dist)
 # Similarity
 mock_6ind_Z <- 1 - mock_6ind_dist / max(mock_6ind_dist)
-colnames(mock_6ind_Z) <- rownames(mock_6ind_Z) <- LETTERS[seq_len(mock_6ind_n)]
 # Abundances of individuals are 1, or any identical value
-mock_6ind_abd <- rep(10, mock_6ind_n)
-names(mock_6ind_abd) <- LETTERS[seq_len(mock_6ind_n)]
+mock_6ind_abd <- rep(1, mock_6ind_n)
 # Diversity
 profile_similarity(
   mock_6ind_abd, 
@@ -736,3 +747,5 @@ profile_similarity(
 ) %>% 
   autoplot()
 ```
+
+Change the variability (0.1 first) and run the code again.
