@@ -30,7 +30,7 @@ packages_required <- c(
   # R tools
   "knitr", "tidyverse", 
   # Scientific packages
-  "ade4", "divent", "vegan"
+  "ade4", "divent", "GoFKernel", "vegan"
 )
 # Already installed?
 packages_installed <- vapply(
@@ -80,6 +80,7 @@ BCI_50ha_abd %>%
   log10() %>% 
   hist(breaks = 15, main = "Preston diagram")
 ```
+
 Probability densities
 
 ```{r}
@@ -90,6 +91,7 @@ BCI_50ha_abd %>%
   geom_density(aes(x = abundance), bounds = c(0, Inf)) +
   scale_x_log10()
 ```
+
 ### Whittaker diagram
 
 ```{r}
@@ -99,7 +101,6 @@ BCI_50ha_abd %>%
   as_abundances() %>% 
   autoplot()
 ```
-
 
 ## Broken stick
 
@@ -257,9 +258,20 @@ abd_freq_count() %>%
 arrange(desc(abundance))
 ```
 
-### Accumulation curve
+## Accumulation of subplots
 
-Compute the accumulation curve of BCI up to twice the sampling effort, with its confidence interval.
+Accumulate subplots in random order (Monte-Carlo).
+Plot the expectation and the confidence interval of the number of species with respect to the number of samples.
+
+```{r}
+BCI %>% 
+  specaccum() %>% 
+  plot()
+```
+
+## Accumulation curve
+
+Compute the expected accumulation curve of BCI up to twice the sampling effort, with its confidence interval.
 
 ```{r}
 # Number of trees in BCI
@@ -276,6 +288,53 @@ BCI_all %>%
   autoplot() +
   geom_vline(xintercept = BCI_n, linetype = 2) +
   geom_hline(yintercept = BCI_richness, linetype = 1)
+```
+
+# Canonical lognormal
+
+ggplot seems to bug with weighted, bounded density and log scale.
+
+```{r}
+# Most adundant species
+BCI_50ha_mas <- max(BCI_50ha_abd)
+BCI_50ha_abd %>% 
+  tibble(abundance = .) %>% 
+  ggplot() +
+  # Bounded density
+  geom_density(
+    aes(x = abundance, color = "Species curve"), 
+    bounds = c(0, Inf)
+  ) +
+  # Weighted density
+  geom_density(
+    aes(x = abundance, weight = abundance, color = "Individuals curve"), 
+    bounds = c(min(BCI_50ha_abd), max(BCI_50ha_abd))
+  ) +
+  scale_x_log10()
+```
+
+Correct curves.
+
+```{r}
+library("GoFKernel")
+plot(
+  density.reflected(log10(BCI_50ha_abd), lower = 0),
+  type = "l", 
+  col = "red", 
+  ylim = c(0, .8),
+  main = "Canonical BCI",
+  xlab = "log10(abundance)"
+)
+lines(
+  density.reflected(
+    log10(BCI_50ha_abd), 
+    weights = BCI_50ha_abd, 
+    lower = min(log10(BCI_50ha_abd)), 
+    upper = max(log10(BCI_50ha_abd))
+  )
+)
+abline(v = max(log10(BCI_50ha_abd)), lty = 2)
+
 ```
 
 # Richness
