@@ -24,7 +24,8 @@ jobs:
         run: |
           options(pkgType = "binary")
           options(install.packages.check.source = "no")
-          install.packages(c("rmarkdown", "knitr"))
+          install.packages("pak")
+          pak::pkg_install(c("any::rmarkdown", "any::knitr", "ericmarcon/divent"))          
         shell: Rscript {0}
       - name: Publish to GitHub Pages
         uses: quarto-dev/quarto-actions/publish@v2
