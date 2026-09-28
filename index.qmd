@@ -345,8 +345,8 @@ Build dummy communities.
 
 ```{r}
 tibble(
-  sp_1 = c(10, 10, 10, 10),
-  sp_2 = c(10, 11, 1, 0)
+  sp_1 = c(10, 10, 1000, 1000),
+  sp_2 = c(10, 11,    1,    0)
 ) %>% 
   as_abundances() %>% 
   print() ->
@@ -458,6 +458,16 @@ p6_shannon %>%
   mutate(diversity = exp(entropy))
 ```
 
+## Dummy communities
+
+Compare entropy.
+
+```{r}
+comm_dummy
+ent_shannon(comm_dummy, estimator = "naive")
+```
+
+
 # Simpson
 
 ## Paracou 6
@@ -556,6 +566,15 @@ p6_abundances %>%
   # Reciprocal
   `^`(-1)
   
+```
+
+## Dummy communities
+
+Compare diversity
+
+```{r}
+comm_dummy
+div_hill(comm_dummy, q = 1, estimator = "naive")
 ```
 
 # Comparing diversity
