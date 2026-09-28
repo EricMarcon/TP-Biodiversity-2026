@@ -365,7 +365,7 @@ Asymptotic richness.
 div_richness(comm_dummy)
 ```
 
-### Paracou 6
+## Paracou 6
 
 Prepare the data: gather the four subplots.
 
@@ -398,7 +398,7 @@ div_richness(p6_abundances, estimator = "naive") %>%
   bind_rows(div_richness(p6_abundances, estimator = "jackknife", jack_max = 1))
 ```
 
-### Interpolation / extrapolation
+## Interpolation / extrapolation
 
 Diversity of 1 ha in Paracou.
 
@@ -439,7 +439,7 @@ ggplot() +
   labs(x = "Probability", y = "Information")
 ```
 
-### Paracou 6
+## Paracou 6
 
 Estimators.
 
@@ -625,6 +625,8 @@ mock_3sp_abd %>%
 
 ```{r}
 library("ape")
+# Prepare the tree for convenience: make the branches twice longer
+mock_3sp_tree$edge.length <- 2 * mock_3sp_tree$edge.length
 plot(mock_3sp_tree, direction = "downwards", srt = 90)
 axis(2)
 ```
@@ -718,8 +720,8 @@ Ordinariness.
 # Probabilities of species
 mock_3sp_prob <- mock_3sp_abd / sum(mock_3sp_abd)
 # Ordinariness of species
-mock_3sp_O <- mock_3sp_Z %*% mock_3sp_prob
-# Compare probaiblities and ordinariness
+mock_3sp_O <- as.numeric(mock_3sp_Z %*% mock_3sp_prob)
+# Compare probabilities and ordinariness
 tibble(
   Probability = mock_3sp_prob,
   Rarity_p = 1 / mock_3sp_prob,
