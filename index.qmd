@@ -66,13 +66,46 @@ It comes with a practical you will run at home (`Biodiv-Practical.Rmd`).
 
 # Species distributions
 
+## Figures
+
+### Preston diagram
+
+```{r}
+library("tidyverse")
+library("vegan")
+data(BCI)
+# Sum the 50 1-ha plots
+BCI_50ha_abd <- colSums(BCI)
+BCI_50ha_abd %>% 
+  log10() %>% 
+  hist(breaks = 15, main = "Preston diagram")
+```
+Probability densities
+
+```{r}
+BCI_50ha_abd %>% 
+  tibble(abundance = .) %>% 
+  ggplot() +
+  # Bounded density
+  geom_density(aes(x = abundance), bounds = c(0, Inf)) +
+  scale_x_log10()
+```
+### Whittaker diagram
+
+```{r}
+library("divent")
+BCI_50ha_abd %>% 
+  # Declare it is an "abundances" object
+  as_abundances() %>% 
+  autoplot()
+```
+
+
 ## Broken stick
 
 Random distributions are created by `divent::rxxx()`functions.
 
 ```{r}
-library("tidyverse")
-library("divent")
 rcommunity(
   # One community
   1,
@@ -107,7 +140,7 @@ rcommunity(
   autoplot()
 ```
 
-### Lognormal
+## Lognormal
 
 Random distribution.
 
@@ -129,7 +162,7 @@ rcommunity(
 
 Modify the standard deviation.
 
-### Log-series
+## Log-series
 
 Random distribution.
 
@@ -148,7 +181,7 @@ rcommunity(
   autoplot()
 ```
 
-### Estimate the parameters
+## Estimate the parameters
 
 Draw a very large lognormal distribution.
 
