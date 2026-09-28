@@ -1,5 +1,5 @@
 ---
-title: "Biodiversity Measurement course support"
+title: "Diversity and Distribution course support"
 format:
     html:
       number-sections: true
@@ -21,7 +21,7 @@ bibliography: references.bib
 ---
 
 ```{r}
-#| label: DoNotModify
+#| label: Setup
 #| include: false
 ### Utilities for R.
 
@@ -30,7 +30,7 @@ packages_required <- c(
   # R tools
   "knitr", "tidyverse", 
   # Scientific packages
-  "divent", "vegan"
+  "ade4", "divent", "vegan"
 )
 # Already installed?
 packages_installed <- vapply(
@@ -388,7 +388,7 @@ p6_simpson %>%
   mutate(diversity = 1 / (1 - entropy))
 ```
 
-# Generalised entropy
+# Generalized entropy
 
 ## Information
 
@@ -754,11 +754,13 @@ Change the variability (0.1 first) and run the code again.
 
 ## Mock data
 
+Three habitats: A, B, C.
+
 ```{r}
 matrix(
   c(
-    1, 1, 1, 1, 1, 1, 0, 1, 0, 0,
     0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 0, 1, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 1, 1, 1
   ),
   nrow = 3, 
@@ -781,4 +783,144 @@ div_richness(mock_island_abd, gamma = TRUE, estimator = "naive")
 
 Multiplicative partitioning: 10 effective species ($\gamma$) = 5 effective species per habitat ($\alpha$) times 2 habitats ($\beta$).
 
+```{r}
+div_part(mock_island_abd, q = 0, estimator = "naive")
+```
+
 Additive partitioning: 10 effective species ($\gamma$) = 5 effective species per habitat ($\alpha$) + 5 more species ($\beta$).
+
+## Paracou 6
+
+The plot is made of 4 subplots.
+
+```{r}
+# Diversity profiles of the 4 subplots
+paracou_6_abd %>% 
+  profile_hill() %>% 
+  autoplot()
+```
+
+### Partitioning
+
+Function `div_part()` computes $\alpha$, $\beta$ and $\gamma$ diversity.
+
+```{r}
+div_part(paracou_6_abd, q = 1)
+```
+
+### Step by step
+
+```{r}
+# Alpha entropy
+paracou_6_abd %>% 
+  ent_tsallis(q = 1) %>% 
+  # Mean entropy
+  group_by(order) %>% 
+  summarise(ent_alpha = mean(entropy)) %>% 
+  # Diversity
+  mutate(div_alpha = exp_q(ent_alpha, q = 1)) %>% 
+  print() ->
+  paracou_6_alpha
+```
+
+```{r}
+# Gamma entropy
+paracou_6_abd %>% 
+  # Group the subplots
+  metacommunity() %>% 
+  ent_tsallis(q = 1) %>%
+  # Rename entropy for clarity
+  rename(ent_gamma = entropy) %>% 
+  # Diversity
+  mutate(div_gamma = exp_q(ent_gamma, q = 1)) %>% 
+  print() ->
+  paracou_6_gamma
+```
+
+```{r}
+# Make a single tibble with alpha and gamma diversities
+paracou_6_alpha %>% 
+  bind_cols(
+    paracou_6_gamma %>% 
+      select(ent_gamma, div_gamma)
+  ) %>% 
+  mutate(
+    # beta entropy
+    ent_beta = ent_gamma - ent_alpha,
+    # beta diversity
+    div_beta = div_gamma / div_alpha
+  )
+```
+
+### Profiles
+
+Not implemented yet in divent.
+
+alpha diversity.
+
+```{r}
+# Values of q used for computation: default values of profile_xxx()
+orders <- seq(from = 0, to = 2, by = 0.1)
+sapply(
+  # Apply ent_tsallis to all orders
+  orders,
+  FUN = \(q) {
+    # Get a number to obtain a matrix with sapply
+    ent_tsallis(paracou_6_abd, q = q, as_numeric = TRUE)
+  }
+) %>% 
+  # Each row contains a subbplot, each column an order, values are entropy
+  # Calculate mean entropy (weights are equal)
+  colMeans() %>% 
+  # Diversity
+  exp_q(q = orders) %>% 
+  # Make a tibble
+  tibble(
+    order = orders,
+    div_alpha = .
+  ) %>% 
+  print() ->
+  paracou_6_alpha_profile
+```
+
+gamma diversity.
+
+```{r}
+paracou_6_abd %>% 
+  profile_hill(gamma = TRUE) %>% 
+  # Rename diversity to recongnize gamma later
+  rename(div_gamma = diversity) %>% 
+  print() ->
+  paracou_6_gamma_profile
+```
+
+Compute beta.
+
+```{r}
+paracou_6_gamma_profile %>% 
+  # Join the tibbles by identical order
+  inner_join(paracou_6_alpha_profile) %>% 
+  # Calculate beta diversity
+  mutate(div_beta = div_gamma / div_alpha) %>% 
+  print() ->
+  paracou_6_profile
+```
+
+Plot.
+
+```{r}
+paracou_6_profile %>% 
+  # paracou_6_profile is an object of class profile that can be plotted
+  # The column to plot must be named diversity
+  rename(diversity = div_alpha) %>% 
+  autoplot() + 
+  theme(legend.position = "none")
+```
+
+```{r}
+paracou_6_profile %>% 
+  # rename div_beta to plot it
+  rename(diversity = div_beta) %>% 
+  autoplot() + 
+  theme(legend.position = "none")
+```
