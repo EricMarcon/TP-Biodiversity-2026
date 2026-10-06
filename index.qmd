@@ -21,7 +21,7 @@ bibliography: references.bib
 ---
 
 ```{r}
-#| label: Setup
+#| label: Install
 #| include: false
 ### Utilities for R.
 
@@ -30,7 +30,7 @@ packages_required <- c(
   # R tools
   "knitr", "tidyverse", 
   # Scientific packages
-  "ade4", "divent", "GoFKernel", "vegan"
+  "ade4", "divent", "GoFKernel", "sads", "untb", "vegan"
 )
 # Already installed?
 packages_installed <- vapply(
@@ -224,6 +224,91 @@ comm_large_lnorm %>%
 autoplot(comm_lnorm, fit_rac = TRUE, distribution = "lnorm")
 # Estimate the parameters
 fit_rac(comm_lnorm, distribution = "lnorm") 
+```
+
+## Zero-sum multinomial distribution
+
+BCI parameters $\theta$ and $m$ are estimated following @etienne2005 with the untb package.
+
+```{r}
+#| label: bci_params
+#| echo: true
+# BCI data
+library("vegan")
+data(BCI)
+BCI_50ha <- colSums(BCI)
+library("untb")
+if (file.exists("data/BCI_logkda.RData")) {
+  # Use the saved result if available to save
+  # computation resources
+  load("data/BCI_logkda.RData")
+} else {
+  BCI_50ha %>% 
+  # name conflict with dplyr::count()
+  untb::count() %>% 
+  # requires pari/gp installed and in the search paths,
+  # or use gp_binary argument
+  logkda() ->
+  BCI_logkda
+  # Save the result
+  save(BCI_logkda, file = "data/BCI_logkda.RData")
+}
+BCI_50ha %>% 
+  # name conflict with dplyr::count()
+  untb::count() %>% 
+  # Estimate theta and m
+  optimal.params(log.kda = BCI_logkda) %>% 
+  print() ->
+  BCI_params
+```
+
+A metacommunity with $J_m = 10^6$ (arbitrary) and $\theta$ derived from BCI data is simulated.
+
+```{r}
+#| label: the_metacommunity
+#| echo: true
+J_m <- 1E6
+theta <- BCI_params[1]
+the_metacommunity <- rcommunity(
+  1, 
+  size = J_m , 
+  distribution = "lseries", 
+  fisher_alpha = theta
+)
+```
+
+The distribution of the local community is derived.
+$J$ is that of BCI and $m$ was estimated previously, compared to an arbitrary value of $m$.
+
+```{r}
+#| label: bci_sim_code
+#| echo: true
+J <- sum(BCI)
+m <- BCI_params[2]
+library("sads")
+# Number of species in the local community
+Svolkov(theta, m, J) %>% 
+  # Must be integers for the simulation
+  round() %>% 
+  # Draw the species abundances
+  rvolkov(theta, m, J) %>% 
+  # Make it an abundances object top plot it
+  as_abundances() %>% 
+  # Whittaker plot
+  autoplot() ->
+  BCI_sim_neutral
+# BCI real distribution
+BCI_50ha %>% 
+  sort(decreasing = TRUE) %>% 
+  as_tibble() %>% 
+  mutate(rank = seq_len(n())) -> 
+  BCI_tbl_50ha
+# Plot altogether
+BCI_sim_neutral +
+  geom_line(
+    data = BCI_tbl_50ha,
+    aes(x = rank, y = value)
+  )
 ```
 
 # Species Accumulation Curves
@@ -466,7 +551,6 @@ Compare entropy.
 comm_dummy
 ent_shannon(comm_dummy, estimator = "naive")
 ```
-
 
 # Simpson
 
