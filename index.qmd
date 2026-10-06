@@ -237,7 +237,8 @@ BCI parameters $\theta$ and $m$ are estimated following @etienne2005 with the un
 library("vegan")
 data(BCI)
 BCI_50ha <- colSums(BCI)
-library("untb")
+# Don't load untb because of conflicts with dplyr::count() and select()
+# library("untb")
 if (file.exists("data/BCI_logkda.RData")) {
   # Use the saved result if available to save
   # computation resources
@@ -248,7 +249,7 @@ if (file.exists("data/BCI_logkda.RData")) {
   untb::count() %>% 
   # requires pari/gp installed and in the search paths,
   # or use gp_binary argument
-  logkda() ->
+  untb::logkda() ->
   BCI_logkda
   # Save the result
   save(BCI_logkda, file = "data/BCI_logkda.RData")
@@ -257,7 +258,7 @@ BCI_50ha %>%
   # name conflict with dplyr::count()
   untb::count() %>% 
   # Estimate theta and m
-  optimal.params(log.kda = BCI_logkda) %>% 
+  untb::optimal.params(log.kda = BCI_logkda) %>% 
   print() ->
   BCI_params
 ```
