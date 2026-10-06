@@ -270,6 +270,7 @@ $J$ is that of BCI and $m$ was estimated previously.
 #| label: bci_sim_code
 #| echo: true
 J <- sum(BCI)
+theta <- BCI_params[1]
 m <- BCI_params[2]
 library("sads")
 # Number of species in the local community
