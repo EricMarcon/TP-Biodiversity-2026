@@ -263,23 +263,8 @@ BCI_50ha %>%
   BCI_params
 ```
 
-A metacommunity with $J_m = 10^6$ (arbitrary) and $\theta$ derived from BCI data is simulated.
-
-```{r}
-#| label: the_metacommunity
-#| echo: true
-J_m <- 1E6
-theta <- BCI_params[1]
-the_metacommunity <- rcommunity(
-  1, 
-  size = J_m , 
-  distribution = "lseries", 
-  fisher_alpha = theta
-)
-```
-
 The distribution of the local community is derived.
-$J$ is that of BCI and $m$ was estimated previously, compared to an arbitrary value of $m$.
+$J$ is that of BCI and $m$ was estimated previously.
 
 ```{r}
 #| label: bci_sim_code
