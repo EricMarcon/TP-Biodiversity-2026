@@ -165,6 +165,17 @@ Modify the standard deviation.
 
 ## Log-series
 
+The gamma function.
+
+```{r}
+ggplot() + 
+  geom_function(
+    fun = dgamma, 
+    args = list(shape = 0.1),
+    xlim = c(0, 10)
+  )
+```
+
 Random distribution.
 
 ```{r}
@@ -201,6 +212,9 @@ rcommunity(
   # Name it
   mutate(site = "Large log-normal") ->
   comm_large_lnorm
+# Plot it
+comm_large_lnorm %>% 
+  autoplot()
 ```
 
 Sample it.
@@ -226,9 +240,17 @@ autoplot(comm_lnorm, fit_rac = TRUE, distribution = "lnorm")
 fit_rac(comm_lnorm, distribution = "lnorm") 
 ```
 
+Fit the distrinbution of BCI:
+
+```{r}
+BCI_50ha_abd %>% 
+  as_abundances() %>% 
+  autoplot(fit_rac = TRUE, distribution = "lnorm")
+```
+
 ## Zero-sum multinomial distribution
 
-BCI parameters $\theta$ and $m$ are estimated following @etienne2005 with the untb package.
+BCI parameters $\theta$ and $m$ are estimated following @etienne2005 with the *untb* package.
 
 ```{r}
 #| label: bci_params
@@ -528,6 +550,26 @@ Effective number of species: $e^H$.
 ```{r}
 p6_shannon %>% 
   mutate(diversity = exp(entropy))
+```
+
+Unveiled distribution
+
+```{r}
+p6_abundances %>% 
+  # Unveil the species probabilities
+  probabilities(estimator = "Chao2015", unveiling = "geometric") %>% 
+  # Rename the distribution to recognize it
+  mutate(site = "Unveiled probabilities") %>% 
+  # Add the naive probability estimators
+  bind_rows(
+    p6_abundances %>% 
+      # Just divide n_s by n
+      probabilities() %>% 
+      # Rename the distribution to recognize it
+      mutate(site = "Naive probabilities")
+  ) %>% 
+  autoplot() +
+  labs(color = "Estimation")
 ```
 
 ## Dummy communities
