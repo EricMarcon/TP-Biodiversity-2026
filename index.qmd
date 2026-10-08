@@ -552,7 +552,7 @@ p6_shannon %>%
   mutate(diversity = exp(entropy))
 ```
 
-Unveiled distribution
+Unveiled distribution.
 
 ```{r}
 p6_abundances %>% 
