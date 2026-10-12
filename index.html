@@ -490,8 +490,8 @@ window.Quarto = {
 <pre><code># A tibble: 2 × 3
   site                mu sigma
   &lt;chr&gt;            &lt;dbl&gt; &lt;dbl&gt;
-1 Large log-normal 15.2   1.04
-2 Small log-normal  1.80  1.07</code></pre>
+1 Large log-normal 15.4  0.939
+2 Small log-normal  1.88 0.953</code></pre>
 </div>
 </div>
 <p>Fit the distrinbution of BCI:</p>
@@ -791,6 +791,7 @@ bandwidth *not* using 'weights'</code></pre>
 </div>
 </div>
 </div>
+<p>The red curve is the smoothed Preston plot of BCI, i.e.&nbsp;the probability density for a species to contain a given number of individuals. The black curve is the probability for an individual to belong to a species that contains that number of individuals. If it reaches its maximum value for the most abundant species, then the lognormal distribution is canonical.</p>
 </section>
 <section id="richness" class="level1" data-number="5">
 <h1 data-number="5"><span class="header-section-number">5</span> Richness</h1>
@@ -817,14 +818,14 @@ bandwidth *not* using 'weights'</code></pre>
 </div>
 <p>Sample richness.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">div_richness</span>(comm_dummy, <span class="at">estimator =</span> <span class="st">"naive"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">div_richness</span>(comm_dummy, <span class="at">estimator =</span> <span class="st">"Chao1"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 4 × 5
   site   weight estimator      order diversity
   &lt;chr&gt;   &lt;dbl&gt; &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;
-1 site_1     20 naive              0         2
-2 site_2     21 naive              0         2
-3 site_3   1001 naive              0         2
+1 site_1     20 Chao1              0         2
+2 site_2     21 Chao1              0         2
+3 site_3   1001 Chao1              0         2
 4 site_4   1000 Single Species     0         1</code></pre>
 </div>
 </div>
@@ -1650,9 +1651,9 @@ C  1.2909944  2.950698e-16</code></pre>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb136"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb136-1"><a href="#cb136-1" aria-hidden="true" tabindex="-1"></a><span class="fu">matrix</span>(</span>
 <span id="cb136-2"><a href="#cb136-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(</span>
-<span id="cb136-3"><a href="#cb136-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>,</span>
-<span id="cb136-4"><a href="#cb136-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>,</span>
-<span id="cb136-5"><a href="#cb136-5" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span></span>
+<span id="cb136-3"><a href="#cb136-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">3</span>,</span>
+<span id="cb136-4"><a href="#cb136-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">0</span>,</span>
+<span id="cb136-5"><a href="#cb136-5" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">3</span></span>
 <span id="cb136-6"><a href="#cb136-6" aria-hidden="true" tabindex="-1"></a>  ),</span>
 <span id="cb136-7"><a href="#cb136-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">nrow =</span> <span class="dv">3</span>, </span>
 <span id="cb136-8"><a href="#cb136-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">byrow =</span> <span class="cn">TRUE</span></span>
@@ -1666,36 +1667,36 @@ C  1.2909944  2.950698e-16</code></pre>
 </div>
 <p>Richness.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb137"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb137-1"><a href="#cb137-1" aria-hidden="true" tabindex="-1"></a><span class="fu">div_richness</span>(mock_island_abd, <span class="at">estimator =</span> <span class="st">"naive"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb137"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb137-1"><a href="#cb137-1" aria-hidden="true" tabindex="-1"></a><span class="fu">div_richness</span>(mock_island_abd)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3 × 5
-  site      weight estimator order diversity
-  &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;     &lt;int&gt;
-1 Habitat A      1 naive         0         5
-2 Habitat B      1 naive         0         7
-3 Habitat C      1 naive         0         3</code></pre>
+  site      weight estimator   order diversity
+  &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;       &lt;dbl&gt;     &lt;int&gt;
+1 Habitat A      1 Jackknife 0     0         5
+2 Habitat B      1 Jackknife 0     0         7
+3 Habitat C      1 Jackknife 0     0         3</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb139"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb139-1"><a href="#cb139-1" aria-hidden="true" tabindex="-1"></a><span class="fu">div_richness</span>(mock_island_abd, <span class="at">gamma =</span> <span class="cn">TRUE</span>, <span class="at">estimator =</span> <span class="st">"naive"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb139"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb139-1"><a href="#cb139-1" aria-hidden="true" tabindex="-1"></a><span class="fu">div_richness</span>(mock_island_abd, <span class="at">gamma =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 4
-  site          estimator order diversity
-  &lt;chr&gt;         &lt;chr&gt;     &lt;dbl&gt;     &lt;dbl&gt;
-1 Metacommunity naive         0        10</code></pre>
+  site          estimator   order diversity
+  &lt;chr&gt;         &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt;
+1 Metacommunity Jackknife 2     0        10</code></pre>
 </div>
 </div>
 <p>Multiplicative partitioning: 10 effective species (<span class="math inline">\(\gamma\)</span>) = 5 effective species per habitat (<span class="math inline">\(\alpha\)</span>) times 2 habitats (<span class="math inline">\(\beta\)</span>).</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb141"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb141-1"><a href="#cb141-1" aria-hidden="true" tabindex="-1"></a><span class="fu">div_part</span>(mock_island_abd, <span class="at">q =</span> <span class="dv">0</span>, <span class="at">estimator =</span> <span class="st">"naive"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb141"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb141-1"><a href="#cb141-1" aria-hidden="true" tabindex="-1"></a><span class="fu">div_part</span>(mock_island_abd, <span class="at">q =</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 6
   site          scale     estimator order diversity weight
   &lt;chr&gt;         &lt;chr&gt;     &lt;chr&gt;     &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt;
-1 Metacommunity gamma     "naive"       0        10      3
+1 Metacommunity gamma     "UnveilJ"     0        10      3
 2 Metacommunity beta      ""            0         2     NA
 3 Metacommunity alpha     ""            0         5     NA
-4 Habitat A     community "naive"       0         5      1
-5 Habitat B     community "naive"       0         7      1
-6 Habitat C     community "naive"       0         3      1</code></pre>
+4 Habitat A     community "UnveilJ"     0         5      1
+5 Habitat B     community "UnveilJ"     0         7      1
+6 Habitat C     community "UnveilJ"     0         3      1</code></pre>
 </div>
 </div>
 <p>Additive partitioning: 10 effective species (<span class="math inline">\(\gamma\)</span>) = 5 effective species per habitat (<span class="math inline">\(\alpha\)</span>) + 5 more species (<span class="math inline">\(\beta\)</span>).</p>
