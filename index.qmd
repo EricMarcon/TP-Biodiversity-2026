@@ -431,6 +431,10 @@ abline(v = max(log10(BCI_50ha_abd)), lty = 2)
 
 ```
 
+The red curve is the smoothed Preston plot of BCI, i.e. the probability density for a species to contain a given number of individuals.
+The black curve is the probability for an individual to belong to a species that contains that number of individuals.
+If it reaches its maximum value for the most abundant species, then the lognormal distribution is canonical.
+
 # Richness
 
 ## Dummy communities
@@ -450,7 +454,7 @@ tibble(
 Sample richness.
 
 ```{r}
-div_richness(comm_dummy, estimator = "naive")
+div_richness(comm_dummy, estimator = "Chao1")
 ```
 
 Asymptotic richness.
@@ -985,9 +989,9 @@ Three habitats: A, B, C.
 ```{r}
 matrix(
   c(
-    0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 0, 1, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 1, 1, 1
+    0, 0, 0, 0, 0, 3, 3, 3, 3, 3,
+    3, 3, 3, 3, 3, 3, 0, 3, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 3, 3, 3
   ),
   nrow = 3, 
   byrow = TRUE
@@ -1003,14 +1007,14 @@ matrix(
 Richness.
 
 ```{r}
-div_richness(mock_island_abd, estimator = "naive")
-div_richness(mock_island_abd, gamma = TRUE, estimator = "naive")
+div_richness(mock_island_abd)
+div_richness(mock_island_abd, gamma = TRUE)
 ```
 
 Multiplicative partitioning: 10 effective species ($\gamma$) = 5 effective species per habitat ($\alpha$) times 2 habitats ($\beta$).
 
 ```{r}
-div_part(mock_island_abd, q = 0, estimator = "naive")
+div_part(mock_island_abd, q = 0)
 ```
 
 Additive partitioning: 10 effective species ($\gamma$) = 5 effective species per habitat ($\alpha$) + 5 more species ($\beta$).
