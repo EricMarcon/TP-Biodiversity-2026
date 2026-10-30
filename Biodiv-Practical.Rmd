@@ -872,8 +872,8 @@ quiz(
   question("How is the data organised to create a metacommunity?",
            answer("In a dataframe", correct = TRUE),
            answer("In a matrix"),
-           answer("A column per community and a row per species", correct = TRUE),
-           answer("A column per species and a row per community"),
+           answer("A column per community and a row per species"),
+           answer("A column per species and a row per community", correct = TRUE),
            allow_retry = TRUE
   ),
   question("Alpha diversity is the weighted average of community diversity",
