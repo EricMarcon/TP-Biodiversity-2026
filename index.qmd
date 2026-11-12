@@ -1,9 +1,9 @@
 ---
 title: "Diversity and Distribution course support"
 format:
-    html:
-      number-sections: true
-      toc: true
+  html:
+    number-sections: true
+    toc: true
     code-links:
     - text: "GitHub"
       icon: github
