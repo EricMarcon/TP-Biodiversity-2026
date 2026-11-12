@@ -24,7 +24,16 @@ jobs:
         run: |
           install.packages("pak")
           pak::pkg_install(
-            c("any::rmarkdown", "any::knitr", "any::divent")
+            c(
+              "any::rmarkdown", 
+              "any::knitr", 
+              "any::ade4", 
+              "any::divent",
+              "any::GoFKernel", 
+              "any::sads", 
+              "any::untb", 
+              "any::vegan"
+            )
           )          
         shell: Rscript {0}
       - name: Publish to GitHub Pages
