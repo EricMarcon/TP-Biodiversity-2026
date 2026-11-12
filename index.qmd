@@ -4,6 +4,10 @@ format:
     html:
       number-sections: true
       toc: true
+    code-links:
+    - text: "GitHub"
+      icon: github
+      href: https://github.com/EricMarcon/TP-Biodiversity-2026
 editor: visual
 # https://quarto.org/docs/computations/execution-options.html#output-options
 execute:
