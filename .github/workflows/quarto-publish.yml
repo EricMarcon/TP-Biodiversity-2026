@@ -27,6 +27,7 @@ jobs:
             c(
               "any::rmarkdown", 
               "any::knitr", 
+              "any::tidyverse", 
               "any::ade4", 
               "any::divent",
               "any::GoFKernel", 
